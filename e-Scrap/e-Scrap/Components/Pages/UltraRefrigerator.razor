@@ -1,4 +1,4 @@
-﻿@page "/products"
+﻿@page "/productsUltraRefrigerator"
 @using e.Models
 
 @inject HttpClient Http
@@ -6,38 +6,63 @@
 
 <h3>Scraped Products</h3>
 
-@if (products != null)
+@if (products != null && products.Count > 0)
 {
     <ul>
-        @for (int i = 1; i < products.Count; i++)
+        @* First, display products with a discount price *@
+        @foreach (var product in products
+       .Where(p => p.DiscountPrice > 0)
+       .OrderBy(p => p.DiscountPrice) // Sort by Price in ascending order
+       .ThenBy(p => p.DiscountPercentage))
         {
-            var product = products[i];
-            <li>@i. @product.Title - @product.Price</li>
+            <li>
+                <a href="@product.Link" target="_blank">@product.Title</a> - Price: @product.Price || Discount Price: @product.DiscountPrice | Percentage: @product.DiscountPercentage
+            </li>
+        }
+
+        @* Then, display products without a discount price *@
+        @foreach (var product in products
+       .Where(p => p.DiscountPrice == 0)
+       .OrderBy(p => p.Price)) // Sort by Price in ascending order
+        {
+            <li>
+                <a href="@product.Link" target="_blank">@product.Title</a> - Price: @product.Price
+            </li>
         }
     </ul>
 }
 else
 {
-    <p>Loading products...</p>
+    <p>No products found or loading...</p>
 }
 
 @code {
-    private List<UltraRefrigeratorModel> products;
+    private List<UltraRefrigeratorModel> products = new List<UltraRefrigeratorModel>();
 
     protected override async Task OnInitializedAsync()
     {
         var client = HttpClientFactory.CreateClient("API");
 
-        try
+        int startPage = 1;
+        int endPage = 10;
+
+        for (int page = startPage; page <= endPage; page++)
         {
-            // Adjust the endpoint to match the route in the controller
-            products = await client.GetFromJsonAsync<List<UltraRefrigeratorModel>>("UltraScraping/ScrapeProducts");
+            try
+            {
+                var pageProducts = await client.GetFromJsonAsync<List<UltraRefrigeratorModel>>($"UltraScraping/ScrapeRefrigeratorUltraroducts?page={page}");
+                if (pageProducts != null && pageProducts.Count > 0)
+                {
+                    products.AddRange(pageProducts);
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"Request error for page {page}: {ex.Message}");
+            }
         }
-        catch (HttpRequestException ex)
-        {
-            // Handle request exceptions
-            Console.WriteLine($"Request error: {ex.Message}");
-            // Optionally, set products to null or some error state
-        }
+
+        // Sort the entire product list by price in ascending order
+        products = products.OrderBy(p => p.Price).ToList();
     }
 }

@@ -11,17 +11,17 @@ public class UltraMdRefrigeratorService
         _httpClient = httpClient;
     }
 
-    public async Task<List<UltraRefrigeratorModel>> ScrapeProductsAsync()
+    public async Task<List<UltraRefrigeratorModel>> ScrapeProductsAsync(int page)
     {
         var products = new List<UltraRefrigeratorModel>();
-        string url = "https://ultra.md/category/refrigerators-xolodilniki?page=1";
+        string url = $"https://ultra.md/category/refrigerators-xolodilniki?page={page}"; 
         var response = await _httpClient.GetStringAsync(url);
 
         var htmlDoc = new HtmlDocument();
         htmlDoc.LoadHtml(response);
 
         var productNodes = htmlDoc.DocumentNode.SelectNodes("//div[contains(@class, 'product-block')]");
-        int i = 0;
+
         foreach (var productNode in productNodes)
         {
             var product = new UltraRefrigeratorModel();
@@ -83,7 +83,6 @@ public class UltraMdRefrigeratorService
                 }
             }
             products.Add(product);
-            i++;
         }
         return products;
     }
