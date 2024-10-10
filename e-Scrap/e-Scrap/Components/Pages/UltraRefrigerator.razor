@@ -1,0 +1,43 @@
+﻿@page "/products"
+@using e.Models
+
+@inject HttpClient Http
+@inject IHttpClientFactory HttpClientFactory
+
+<h3>Scraped Products</h3>
+
+@if (products != null)
+{
+    <ul>
+        @for (int i = 1; i < products.Count; i++)
+        {
+            var product = products[i];
+            <li>@i. @product.Title - @product.Price</li>
+        }
+    </ul>
+}
+else
+{
+    <p>Loading products...</p>
+}
+
+@code {
+    private List<UltraRefrigeratorModel> products;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var client = HttpClientFactory.CreateClient("API");
+
+        try
+        {
+            // Adjust the endpoint to match the route in the controller
+            products = await client.GetFromJsonAsync<List<UltraRefrigeratorModel>>("UltraScraping/ScrapeProducts");
+        }
+        catch (HttpRequestException ex)
+        {
+            // Handle request exceptions
+            Console.WriteLine($"Request error: {ex.Message}");
+            // Optionally, set products to null or some error state
+        }
+    }
+}
