@@ -1,5 +1,5 @@
-﻿using e.Models;
-using HtmlAgilityPack;
+﻿using HtmlAgilityPack;
+using Models.Ultra;
 using System.Globalization;
 
 public class UltraMdRefrigeratorService

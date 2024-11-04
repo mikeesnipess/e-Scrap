@@ -1,11 +1,11 @@
-﻿using e.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Models.Ultra;
 
-namespace e.Controllers
+namespace Controllers.Ultra
 {
     [ApiController]
     [Route("[controller]")]
-    public class UltraScrapingController : ControllerBase 
+    public class UltraScrapingController : ControllerBase
     {
         private readonly UltraMdRefrigeratorService _scrapService;
 
@@ -14,7 +14,7 @@ namespace e.Controllers
             _scrapService = scrapService;
         }
 
-        [HttpGet("ScrapeRefrigeratorUltraroducts")]
+        [HttpGet("ScrapeRefrigeratorUltraProducts")]
         public async Task<IActionResult> ScrapeProducts(int page = 1)
         {
             try

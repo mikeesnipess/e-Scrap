@@ -1,5 +1,5 @@
 ﻿@page "/productsUltraRefrigerator"
-@using e.Models
+@using Models.Ultra;
 
 @inject HttpClient Http
 @inject IHttpClientFactory HttpClientFactory
@@ -50,7 +50,7 @@ else
         {
             try
             {
-                var pageProducts = await client.GetFromJsonAsync<List<UltraRefrigeratorModel>>($"UltraScraping/ScrapeRefrigeratorUltraroducts?page={page}");
+                var pageProducts = await client.GetFromJsonAsync<List<UltraRefrigeratorModel>>($"UltraScraping/ScrapeRefrigeratorUltraProducts?page={page}");
                 if (pageProducts != null && pageProducts.Count > 0)
                 {
                     products.AddRange(pageProducts);
