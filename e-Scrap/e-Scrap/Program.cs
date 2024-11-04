@@ -1,4 +1,7 @@
+using e.Services.Altex;
 using e_Scrap.Components;
+using Microsoft.EntityFrameworkCore;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +18,9 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddHttpClient();
 builder.Services.AddHttpClient<UltraMdRefrigeratorService>();
+builder.Services.AddHttpClient<AltexRefrigeratorService>();
+builder.Services.AddScoped<AltexRefrigeratorService>();
+builder.Services.AddScoped<AltexGasCookerService>();
 
 // Add services to the container
 builder.Services.AddRazorComponents()
@@ -22,6 +28,11 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddControllers();
+
+builder.Services.AddDbContext<AppSettingsDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConection"));
+});
 
 // Add HttpClient with BaseAddress
 builder.Services.AddHttpClient("API", client =>
