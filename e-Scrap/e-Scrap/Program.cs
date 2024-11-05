@@ -21,6 +21,8 @@ builder.Services.AddHttpClient<UltraMdRefrigeratorService>();
 builder.Services.AddHttpClient<AltexRefrigeratorService>();
 builder.Services.AddScoped<AltexRefrigeratorService>();
 builder.Services.AddScoped<AltexGasCookerService>();
+builder.Services.AddScoped<eMagGasCookerService>();
+builder.Services.AddScoped<eMagRefrigeratorService>();
 
 // Add services to the container
 builder.Services.AddRazorComponents()

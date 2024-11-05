@@ -1,0 +1,57 @@
+﻿@page "/productsEMagRefrigerator"
+@using Models.eMag
+@inject HttpClient Http
+@inject IHttpClientFactory HttpClientFactory
+
+<h3>Scraped eMag Refrigerator Products</h3>
+
+@if (loading)
+{
+    <p>Loading products, please wait...</p>
+}
+else if (products != null && products.Count > 0)
+{
+    <div class="product-list">
+        @foreach (var product in products)
+        {
+            <div class="product-card">
+                <h4>@product.Name</h4>
+                <p><strong>Price:</strong> @product.StandardPrice.ToString("C")</p>
+                <p><strong>Discount Price:</strong> @product.DiscountPrice?.ToString("C")</p>
+                <p><strong>Discount:</strong> @product.DiscountPercentage?.ToString("F2")%</p>
+                <p><strong>Description:</strong> @product.ProductDescription</p>
+                <a href="@product.LinkUrl" target="_blank" rel="noopener noreferrer">View Product</a>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>No products found.</p>
+}
+
+@code {
+    private bool loading = true;
+    private List<eMagProductModel> products = new List<eMagProductModel>(); // List to hold eMag refrigerator products
+
+    protected override async Task OnInitializedAsync()
+    {
+        loading = true;
+        var client = HttpClientFactory.CreateClient("API");
+        var response = await client.GetAsync("eMagRefrigerator/eMagScrapeRefrigeratorProducts");
+
+        if (response.IsSuccessStatusCode)
+        {
+            products = await response.Content.ReadFromJsonAsync<List<eMagProductModel>>();
+            products = products.OrderByDescending(x => x.DiscountPercentage).ToList();
+        }
+        else
+        {
+            // Handle error response
+            var errorContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Error: {response.StatusCode}, Content: {errorContent}");
+        }
+
+        loading = false;
+    }
+}
