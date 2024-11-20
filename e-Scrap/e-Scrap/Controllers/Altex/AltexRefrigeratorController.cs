@@ -1,9 +1,6 @@
 ﻿using e.Services.Altex;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Models.Altex;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Models.Common.Refrigerator;
 
 namespace Controllers.Altex
 {
@@ -21,11 +18,11 @@ namespace Controllers.Altex
         }
 
         [HttpGet("ScrapeRefrigeratorAltexProducts")]
-        public async Task<ActionResult<List<AltexProductsModel>>> ScrapeRefrigeratorProducts()
+        public async Task<ActionResult<List<RefrigeratorModel>>> ScrapeRefrigeratorProducts()
         {
             try
             {
-                List<AltexProductsModel> result = await _scrapService.GetAltexRefrigerator();
+                List<RefrigeratorModel> result = await _scrapService.GetAltexRefrigerator();
 
                 // Check if the result is null or empty
                 if (result == null || result.Count == 0)

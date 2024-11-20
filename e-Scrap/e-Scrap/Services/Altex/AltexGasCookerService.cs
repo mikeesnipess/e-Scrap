@@ -1,7 +1,5 @@
-﻿
-
+﻿using e_Scrap.Models.Common.GasCooker;
 using Microsoft.EntityFrameworkCore;
-using Models.Altex;
 
 public class AltexGasCookerService
 {
@@ -12,10 +10,10 @@ public class AltexGasCookerService
         _context = context;
     }
 
-    public async Task<List<AltexProductsModel>> GetGasCookerAltex()
+    public async Task<List<GasCookerModel>> GetGasCookerAltex()
     {
         var resultProducts = await _context.AltexGasCooker
-            .Select(r => new AltexProductsModel
+            .Select(r => new GasCookerModel
             {
                 Id = r.Id,
                 Name = r.Name,

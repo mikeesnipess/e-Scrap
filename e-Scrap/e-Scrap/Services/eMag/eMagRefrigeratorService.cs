@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Models.eMag;
+using Models.Common.Refrigerator;
 
 public class eMagRefrigeratorService
 {
@@ -10,10 +10,10 @@ public class eMagRefrigeratorService
         _context = context;
     }
 
-    public async Task<List<eMagProductModel>> GetRefrigeratorProducts()
+    public async Task<List<RefrigeratorModel>> GetRefrigeratorProducts()
     {
         var resultProducts = await _context.eMagRefrigerator
-            .Select(r => new eMagProductModel
+            .Select(r => new RefrigeratorModel
             {
                 Id = r.Id,
                 ProductId = r.ProductId,

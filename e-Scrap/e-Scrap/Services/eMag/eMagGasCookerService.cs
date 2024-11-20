@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Models.eMag;
+﻿using e_Scrap.Models.Common.GasCooker;
+using Microsoft.EntityFrameworkCore;
 
 public class eMagGasCookerService
 {
@@ -10,10 +10,10 @@ public class eMagGasCookerService
         _context = context;
     }
 
-    public async Task<List<eMagProductModel>> GetGasCookerProducts()
+    public async Task<List<GasCookerModel>> GetGasCookerProducts()
     {
         var resultProducts = await _context.eMagGasCooker
-            .Select(r => new eMagProductModel
+            .Select(r => new GasCookerModel
             {
                 Id = r.Id,
                 ProductId = r.ProductId,

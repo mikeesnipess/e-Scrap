@@ -2,6 +2,25 @@
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="product-list">
 
-Welcome to your new app.
+    @foreach (var category in Category)
+    {
+        <div class="product-card">
+            <p><strong>@category.Key</strong></p>
+            <a href="@category.Value" target="_self" rel="noopener noreferrer">Mergi la @category.Key</a>
+        </div>
+    }
+</div>
+
+
+@code
+{
+    Dictionary<string, string> Category = new();
+    protected override async Task OnInitializedAsync()
+    {
+        Category.Add("Frigidere", "/refrigerator");
+        Category.Add("Aragazuri", "/aragazuri");
+    }
+
+}

@@ -1,42 +1,41 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace e.Scrap.Entities
+namespace Models.Common.Refrigerator
 {
-    public class AltexGasCooker
+    public class RefrigeratorModel
     {
         [Key]
-        public Guid Id { get; set; }  
+        public Guid Id { get; set; }
+        public int? ProductId { get; set; }
 
         [Required]
-        public string Name { get; set; } 
-        public int? ProductId { get; set; }  
+        public string Name { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
-        public decimal StandardPrice { get; set; }  
+        public decimal StandardPrice { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
-        public decimal DiscountPrice { get; set; } 
+        public decimal DiscountPrice { get; set; }
 
         [Required]
         public decimal DiscountPercentage { get; set; }
 
         [ForeignKey("Shop")]
-        public Guid ShopId { get; set; }  
+        public Guid ShopId { get; set; }
 
         [Required]
         public string LinkUrl { get; set; }
 
         [Required]
-        public string ProductDescription { get; set; }  
+        public string ProductDescription { get; set; }
 
         [ForeignKey("Country")]
-        public string CountryId { get; set; } 
+        public string CountryId { get; set; }
 
         [Required]
-        public string ProductType { get; set; }  
+        public string ProductType { get; set; }
         public string ImageSmallUrl { get; set; }
         public string BrandName { get; set; }
-
     }
 }

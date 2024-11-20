@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Models.eMag; // Adjust the namespace according to your project structure
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using e_Scrap.Models.Common.GasCooker;
+using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("[controller]")]
@@ -17,11 +15,11 @@ public class eMagGasCookerController : ControllerBase
     }
 
     [HttpGet("eMagScrapeGasCookerProducts")]
-    public async Task<ActionResult<List<eMagProductModel>>> ScrapGasCookerProducts()
+    public async Task<ActionResult<List<GasCookerModel>>> ScrapGasCookerProducts()
     {
         try
         {
-            List<eMagProductModel> result = await _scrapService.GetGasCookerProducts();
+            List<GasCookerModel> result = await _scrapService.GetGasCookerProducts();
 
             // Check if the result is null or empty
             if (result == null || result.Count == 0)
