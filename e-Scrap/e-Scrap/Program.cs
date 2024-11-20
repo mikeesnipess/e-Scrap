@@ -1,6 +1,8 @@
 using e.Services.Altex;
+using e_crap.Services.eMag;
 using e_Scrap.Components;
 using e_Scrap.Mapping;
+using e_Scrap.Services.Altex;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -23,8 +25,10 @@ builder.Services.AddHttpClient<UltraMdRefrigeratorService>();
 builder.Services.AddHttpClient<AltexRefrigeratorService>();
 builder.Services.AddScoped<AltexRefrigeratorService>();
 builder.Services.AddScoped<AltexGasCookerService>();
+builder.Services.AddScoped<AltexWashMachineService>();
 builder.Services.AddScoped<eMagGasCookerService>();
 builder.Services.AddScoped<eMagRefrigeratorService>();
+builder.Services.AddScoped<eMagWashMachineService>();
 builder.Services.AddScoped<ShopsService>();
 
 // Add services to the container
