@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\e-Scrap.Client\e-Scrap.Client.csproj" />
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="EntityFramework" Version="6.5.1" />
     <PackageReference Include="Flurl.Http" Version="4.0.2" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.67" />

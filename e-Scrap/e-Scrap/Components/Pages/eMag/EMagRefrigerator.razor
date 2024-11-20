@@ -1,6 +1,6 @@
 ﻿@page "/productsRefrigerator/EMag"
 @using e_Scrap.Models
-@using global::Models.eMag
+@using global::Models.Common.Refrigerator
 @inject HttpClient Http
 @inject IHttpClientFactory HttpClientFactory
 
@@ -23,13 +23,13 @@ else if (products != null && products.Count > 0)
                 <p><strong>Price:</strong> @product.StandardPrice.ToString("C")</p>
                 @if (product.DiscountPercentage > 0)
                 {
-                    <p style="color: red"><strong>Discount Price:</strong> @product.DiscountPrice?.ToString("C")</p>
-                    <p style="color: red"><strong>Discount:</strong>@product.DiscountPercentage?.ToString("F2")%</p>
+                    <p style="color: red"><strong>Discount Price:</strong> @product.DiscountPrice.ToString("C")</p>
+                    <p style="color: red"><strong>Discount:</strong>@product.DiscountPercentage.ToString("F2")%</p>
                 }
                 else
                 {
-                    <p><strong>Discount Price:</strong> @product.DiscountPrice?.ToString("C")</p>
-                    <p><strong>Discount:</strong> @product.DiscountPercentage?.ToString("F2")%</p>
+                    <p><strong>Discount Price:</strong> @product.DiscountPrice.ToString("C")</p>
+                    <p><strong>Discount:</strong> @product.DiscountPercentage.ToString("F2")%</p>
                 }
                 <p><strong>Brand Name:</strong> @product.BrandName</p>
                 <p><strong>Shop: </strong> @shopName</p>
@@ -47,7 +47,7 @@ else
 
 @code {
     private bool loading = true;
-    private List<eMagProductModel> products = new List<eMagProductModel>();
+    private List<RefrigeratorModel> products = new();
     private List<ShopsModel> shopsModel = new();
 
     protected override async Task OnInitializedAsync()
@@ -59,7 +59,7 @@ else
 
         if (response.IsSuccessStatusCode)
         {
-            products = await response.Content.ReadFromJsonAsync<List<eMagProductModel>>();
+            products = await response.Content.ReadFromJsonAsync<List<RefrigeratorModel>>();
             products = products.OrderByDescending(x => x.DiscountPercentage)
                         .Where(x => x.DiscountPrice >= 800 && x.DiscountPrice <= 2300)
                         .ToList();

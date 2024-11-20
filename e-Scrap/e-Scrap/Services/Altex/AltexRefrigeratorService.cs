@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Models.Altex;
+using Models.Common.Refrigerator;
 
 namespace e.Services.Altex
 {
@@ -12,10 +12,10 @@ namespace e.Services.Altex
             _context = context;
         }
 
-        public async Task<List<AltexProductsModel>> GetAltexRefrigerator()
+        public async Task<List<RefrigeratorModel>> GetAltexRefrigerator()
         {
             var resultProducts = await _context.AltexRefrigerator
-                .Select(r => new AltexProductsModel
+                .Select(r => new RefrigeratorModel
                 {
                     Id = r.Id,
                     Name = r.Name,
@@ -27,9 +27,9 @@ namespace e.Services.Altex
                     ProductDescription = r.ProductDescription,
                     CountryId = r.CountryId,
                     ProductType = r.ProductType,
-                    ImageSmallUrl =r.ImageSmallUrl,
+                    ImageSmallUrl = r.ImageSmallUrl,
                     BrandName = r.BrandName,
-                    
+
                 })
                 .ToListAsync();
 

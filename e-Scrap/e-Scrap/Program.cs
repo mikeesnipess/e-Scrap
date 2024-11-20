@@ -1,5 +1,6 @@
 using e.Services.Altex;
 using e_Scrap.Components;
+using e_Scrap.Mapping;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -17,6 +18,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddHttpClient();
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddHttpClient<UltraMdRefrigeratorService>();
 builder.Services.AddHttpClient<AltexRefrigeratorService>();
 builder.Services.AddScoped<AltexRefrigeratorService>();

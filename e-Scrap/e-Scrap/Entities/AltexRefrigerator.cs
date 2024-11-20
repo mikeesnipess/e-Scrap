@@ -8,6 +8,7 @@ public class AltexRefrigerator
 
     [Required]
     public string Name { get; set; }  // string
+    public int? ProductId { get; set; }  // Product ID (nullable)
 
     [Column(TypeName = "decimal(18,2)")]
     public decimal StandardPrice { get; set; }  // decimal

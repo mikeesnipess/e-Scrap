@@ -1,6 +1,6 @@
 ﻿@page "/productsRefrigerator/Altex"
 @using e_Scrap.Models
-@using global::Models.Altex
+@using global::Models.Common.Refrigerator
 @inject HttpClient Http
 @inject IHttpClientFactory HttpClientFactory
 
@@ -46,7 +46,7 @@ else
 
 @code {
     private bool loading = true;
-    private List<AltexProductsModel> products = new List<AltexProductsModel>();
+    private List<RefrigeratorModel> products = new();
     private List<ShopsModel> shopsModel = new();
 
     protected override async Task OnInitializedAsync()
@@ -59,7 +59,7 @@ else
 
         if (response.IsSuccessStatusCode)
         {
-            products = await response.Content.ReadFromJsonAsync<List<AltexProductsModel>>();
+            products = await response.Content.ReadFromJsonAsync<List<RefrigeratorModel>>();
             products = products.OrderByDescending(x => x.DiscountPercentage)
                         .Where(x => x.DiscountPrice >= 800 && x.DiscountPrice <= 2300)
                         .ToList();

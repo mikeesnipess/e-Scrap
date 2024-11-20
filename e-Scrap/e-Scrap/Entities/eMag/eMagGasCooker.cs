@@ -6,37 +6,36 @@ namespace e.Scrap.Entities.eMag
     public class eMagGasCooker
     {
         [Key]
-        public Guid Id { get; set; }  // Unique identifier
+        public Guid Id { get; set; } 
 
-        public int? ProductId { get; set; }  // Product ID (nullable)
+        public int? ProductId { get; set; }  
 
         [Required]
-        public string Name { get; set; }  // Name of the refrigerator
+        public string Name { get; set; } 
 
         [Column(TypeName = "decimal(18,2)")]
         [Required]
-        public decimal StandardPrice { get; set; }  // Standard price
+        public decimal StandardPrice { get; set; }  
 
         [Column(TypeName = "decimal(18,2)")]
-        public decimal? DiscountPrice { get; set; }  // Discounted price (nullable)
+        public decimal DiscountPrice { get; set; }  
 
-        public decimal? DiscountPercentage { get; set; }  // Discount percentage (nullable)
+        public decimal DiscountPercentage { get; set; }  
 
         [ForeignKey("Shop")]
         [Required]
-        public Guid ShopId { get; set; }  // Shop ID (foreign key from Shops table)
+        public Guid ShopId { get; set; }  
 
         [Required]
-        public string LinkUrl { get; set; }  // URL link to product
-
-        public string ProductDescription { get; set; }  // Product description (nullable)
+        public string LinkUrl { get; set; }  
+        public string ProductDescription { get; set; }  
 
         [ForeignKey("Country")]
         [Required]
-        public string CountryId { get; set; }  // Country ID (foreign key from Countries table)
+        public string CountryId { get; set; }  
 
-        public string ProductType { get; set; }  // Type of product (nullable)
-        public string ImageSmallUrl { get; set; }
+        public string ProductType { get; set; } 
+        public string? ImageSmallUrl { get; set; }
         public string BrandName { get; set; }
     }
 }
