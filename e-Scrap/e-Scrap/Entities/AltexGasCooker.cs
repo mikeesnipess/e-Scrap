@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace e.Scrap.Entities
 {
@@ -34,5 +34,8 @@ namespace e.Scrap.Entities
 
         [Required]
         public string ProductType { get; set; }  // string
+        public string ImageSmallUrl { get; set; }
+        public string BrandName { get; set; }
+
     }
 }

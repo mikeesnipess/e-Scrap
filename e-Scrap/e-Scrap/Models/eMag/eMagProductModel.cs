@@ -36,5 +36,9 @@ namespace Models.eMag
         public string CountryId { get; set; }  // Country ID (foreign key from Countries table)
 
         public string ProductType { get; set; }  // Type of product (nullable)
+        public string ImageSmallUrl { get; set; }
+        public string BrandName { get; set; }
+
+
     }
 }

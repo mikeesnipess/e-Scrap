@@ -34,5 +34,8 @@ namespace Models.Altex
 
         [Required]
         public string ProductType { get; set; }  // string
+        public string ImageSmallUrl { get; set; }
+        public string BrandName { get; set; }
+
     }
 }

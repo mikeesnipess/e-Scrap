@@ -25,7 +25,9 @@ public class eMagRefrigeratorService
                 LinkUrl = r.LinkUrl,
                 ProductDescription = r.ProductDescription,
                 CountryId = r.CountryId,
-                ProductType = r.ProductType
+                ProductType = r.ProductType,
+                ImageSmallUrl = r.ImageSmallUrl,
+                BrandName = r.BrandName,
             })
             .ToListAsync();
 

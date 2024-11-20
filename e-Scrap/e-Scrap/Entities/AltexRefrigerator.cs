@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 public class AltexRefrigerator
 {
@@ -32,4 +32,7 @@ public class AltexRefrigerator
 
     [Required]
     public string ProductType { get; set; }  // string
+    public string ImageSmallUrl { get; set; }
+    public string BrandName { get; set; }
+
 }
