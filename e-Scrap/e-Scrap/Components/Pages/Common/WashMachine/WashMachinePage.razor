@@ -1,22 +1,22 @@
-﻿@page "/refrigerator"
+﻿@page "/wash-machine"
 @using AutoMapper
 @using e_Scrap.Models
 @using e_Scrap.Models.Common
-@using global::Models.Common.Refrigerator
+@using e_crap.Models.Common.WashMachine
 @inject HttpClient Http
 @inject IHttpClientFactory HttpClientFactory
 @inject IMapper mapper;
 
-<h3>Scraped Refrigerator Products</h3>
+<h3>Scraped Wash Machine Products</h3>
 
 @if (loading)
 {
     <p>Loading products, please wait...</p>
 }
-else if (RefrigeratorProducts != null && RefrigeratorProducts.Count > 0)
+else if (WashMachineProducts != null && WashMachineProducts.Count > 0)
 {
     <div class="product-list">
-        @foreach (var product in RefrigeratorProducts)
+        @foreach (var product in WashMachineProducts)
         {
             var shopName = GetShopName(shopsModel, product.ShopId);
 
@@ -52,7 +52,7 @@ else
 
 @code {
     private bool loading = true;
-    private List<RefrigeratorModel> RefrigeratorProducts = new();
+    private List<WashMachineModel> WashMachineProducts = new();
     private List<ShopsModel> shopsModel = new();
 
     protected override async Task OnInitializedAsync()
@@ -61,9 +61,9 @@ else
         var client = HttpClientFactory.CreateClient("API");
         var shops = await client.GetAsync("Shops/getShops");
         shopsModel = await shops.Content.ReadFromJsonAsync<List<ShopsModel>>();
-        RefrigeratorProducts = await GetAltexRefrigeratorProductsAsync(client);
-        RefrigeratorProducts.AddRange(await GetEMagRefrigeratorProductsAsync(client));
-        RefrigeratorProducts = RefrigeratorProducts
+        WashMachineProducts = await GetAltexWashMachineProductAsync(client);
+        WashMachineProducts.AddRange(await GetEMagWashMachine(client));
+        WashMachineProducts = WashMachineProducts
             .Where(x => x.DiscountPrice >= 800 && x.DiscountPrice <= 1500)
             .OrderByDescending(x => x.DiscountPrice)
             .ToList();
@@ -76,18 +76,18 @@ else
         return shopsModel.FirstOrDefault(s => s.Id == shopId)?.Name ?? "Unknown Shop";
     }
 
-    protected async Task<List<RefrigeratorModel>> GetAltexRefrigeratorProductsAsync(HttpClient client)
+    protected async Task<List<WashMachineModel>> GetAltexWashMachineProductAsync(HttpClient client)
     {
-        var endpoint = "AltexRefrigerator/ScrapeRefrigeratorAltexProducts";
-        var products = await GetDataAsync<RefrigeratorModel>(client, endpoint);
+        var endpoint = "AltexWashMachine/ScrapeAltexWashMachine";
+        var products = await GetDataAsync<WashMachineModel>(client, endpoint);
 
         return products;
     }
 
-    protected async Task<List<RefrigeratorModel>> GetEMagRefrigeratorProductsAsync(HttpClient client)
+    protected async Task<List<WashMachineModel>> GetEMagWashMachine(HttpClient client)
     {
-        var endpoint = "eMagRefrigerator/eMagScrapeRefrigeratorProducts";
-        var products = await GetDataAsync<RefrigeratorModel>(client, endpoint);
+        var endpoint = "eMagWashMachine/ScrapeEMagWashMachine";
+        var products = await GetDataAsync<WashMachineModel>(client, endpoint);
 
         return products;
     }
@@ -114,6 +114,6 @@ else
             Console.WriteLine($"Exception occurred while fetching data: {ex.Message}");
         }
 
-        return new List<T>(); 
+        return new List<T>();
     }
 }

@@ -1,10 +1,10 @@
-﻿@page "/refrigerator/Altex"
+﻿@page "/wash-machine/EMag"
 @using e_Scrap.Models
-@using global::Models.Common.Refrigerator
+@using e_crap.Models.Common.WashMachine
 @inject HttpClient Http
 @inject IHttpClientFactory HttpClientFactory
 
-<h3>Scraped Altex Refrigerator Products</h3>
+<h3>Scraped Altex Wash Machine Products</h3>
 
 @if (loading)
 {
@@ -46,28 +46,27 @@ else
 
 @code {
     private bool loading = true;
-    private List<RefrigeratorModel> products = new();
+    private List<WashMachineModel> products = new();
     private List<ShopsModel> shopsModel = new();
 
     protected override async Task OnInitializedAsync()
     {
         loading = true;
         var client = HttpClientFactory.CreateClient("API");
-        var response = await client.GetAsync("AltexRefrigerator/ScrapeRefrigeratorAltexProducts");
+        var response = await client.GetAsync("eMagWashMachine/ScrapeEMagWashMachine");
         var shops = await client.GetAsync("Shops/getShops");
-
 
         if (response.IsSuccessStatusCode)
         {
-            products = await response.Content.ReadFromJsonAsync<List<RefrigeratorModel>>();
+            products = await response.Content.ReadFromJsonAsync<List<WashMachineModel>>();
             products = products.OrderByDescending(x => x.DiscountPercentage)
-                        .Where(x => x.DiscountPrice >= 800 && x.DiscountPrice <= 2300)
+                        .Where(x => x.DiscountPrice >= 500 && x.DiscountPrice <= 1300)
                         .ToList();
-
             shopsModel = await shops.Content.ReadFromJsonAsync<List<ShopsModel>>();
         }
         else
         {
+            // Handle error response
             var errorContent = await response.Content.ReadAsStringAsync();
             Console.WriteLine($"Error: {response.StatusCode}, Content: {errorContent}");
         }
