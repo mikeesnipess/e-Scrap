@@ -23,6 +23,7 @@ builder.Services.AddScoped<AltexRefrigeratorService>();
 builder.Services.AddScoped<AltexGasCookerService>();
 builder.Services.AddScoped<eMagGasCookerService>();
 builder.Services.AddScoped<eMagRefrigeratorService>();
+builder.Services.AddScoped<ShopsService>();
 
 // Add services to the container
 builder.Services.AddRazorComponents()

@@ -1,5 +1,6 @@
-﻿@page "/productsAltexGasCooker"
-@using Models.Altex
+﻿@page "/productsGasCooker/Altex"
+@using e_Scrap.Models
+@using global::Models.Altex
 @inject HttpClient Http
 @inject IHttpClientFactory HttpClientFactory
 
@@ -14,11 +15,24 @@ else if (products != null && products.Count > 0)
     <div class="product-list">
         @foreach (var product in products)
         {
+            var shopName = GetShopName(shopsModel, product.ShopId);
+
             <div class="product-card">
                 <h4>@product.Name</h4>
+                <img src="@product.ImageSmallUrl" alt="Lipseste imaginea" width="200" height="200" />
                 <p><strong>Price:</strong> @product.StandardPrice.ToString("C")</p>
+                @if (product.DiscountPercentage > 0)
+                {
+                    <p style="color: red"><strong>Discount Price:</strong> @product.DiscountPrice.ToString("C")</p>
+                    <p style="color: red"><strong>Discount:</strong> @product.DiscountPercentage%</p>
+                }
+                else
+                {
                 <p><strong>Discount Price:</strong> @product.DiscountPrice.ToString("C")</p>
                 <p><strong>Discount:</strong> @product.DiscountPercentage%</p>
+                }
+                <p><strong>Brand Name:</strong> @product.BrandName</p>
+                <p><strong>Shop: </strong> @shopName</p>
                 <p><strong>Description:</strong> @product.ProductDescription</p>
                 <a href="@product.LinkUrl" target="_blank" rel="noopener noreferrer">View Product</a>
             </div>
@@ -32,18 +46,23 @@ else
 
 @code {
     private bool loading = true;
-    private List<AltexProductsModel> products = new List<AltexProductsModel>(); // List to hold gas cooker products
+    private List<AltexProductsModel> products = new List<AltexProductsModel>(); 
+    private List<ShopsModel> shopsModel = new();
 
     protected override async Task OnInitializedAsync()
     {
         loading = true;
         var client = HttpClientFactory.CreateClient("API");
         var response = await client.GetAsync("AltexGasCooker/ScrapeGasCookerAltexProducts");
+        var shops = await client.GetAsync("Shops/getShops");
 
         if (response.IsSuccessStatusCode)
         {
             products = await response.Content.ReadFromJsonAsync<List<AltexProductsModel>>();
-            products = products.OrderByDescending(x => x.DiscountPercentage).ToList();
+            products = products.OrderByDescending(x => x.DiscountPercentage)
+                        .Where(x => x.DiscountPrice >= 500 && x.DiscountPrice <= 1300)
+                        .ToList();
+            shopsModel = await shops.Content.ReadFromJsonAsync<List<ShopsModel>>();
         }
         else
         {
@@ -53,5 +72,9 @@ else
         }
 
         loading = false;
+    }
+    protected string GetShopName(List<ShopsModel> shopsModels, Guid shopId)
+    {
+        return shopsModel.FirstOrDefault(s => s.Id == shopId)?.Name ?? "Unknown Shop";
     }
 }
