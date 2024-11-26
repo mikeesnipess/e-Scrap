@@ -19,10 +19,10 @@
 else if (WashMachineProducts != null && WashMachineProducts.Count > 0)
 {
     <DropdownFilter BrandNameProducts="@WashMachineProducts.Select(p => p.BrandName).Distinct().ToList()"
-                    OnSelected="FilterProducts" />
+                    OnSelected="FilterBrandNameWashMachineProducts" />
 
     <div class="product-list">
-        @foreach (var product in FilteredProducts)
+        @foreach (var product in FilteredWashMachine)
         {
             var shopName = GetShopName(shopsModel, product.ShopId);
 
@@ -59,7 +59,7 @@ else
 @code {
     private bool loading = true;
     private List<WashMachineModel> WashMachineProducts = new();
-    private List<WashMachineModel> FilteredProducts = new();
+    private List<WashMachineModel> FilteredWashMachine = new();
     private List<ShopsModel> shopsModel = new();
 
     protected override async Task OnInitializedAsync()
@@ -75,25 +75,35 @@ else
             .OrderByDescending(x => x.DiscountPrice)
             .ToList();
 
-        FilteredProducts = WashMachineProducts;
+        FilteredWashMachine = WashMachineProducts;
         loading = false;
     }
-    private void FilterProducts(string selectedBrand)
-    {
-        Console.WriteLine($"Filtering products by brand: {selectedBrand}");
 
-        if (string.IsNullOrEmpty(selectedBrand))
+    private void FilterBrandNameWashMachineProducts(string selectedBrand)
+    {
+        FilterProducts(
+            WashMachineProducts,
+            selectedBrand,
+            product => product.BrandName,
+            out FilteredWashMachine
+        );
+        StateHasChanged();
+    }
+
+    private void FilterProducts<T>(IEnumerable<T> sourceProducts, string selectedValue, Func<T, string> propertySelector, out List<T> filteredProducts)
+    {
+        Console.WriteLine($"Filtering products by selected value: {selectedValue}");
+
+        if (string.IsNullOrEmpty(selectedValue))
         {
-            FilteredProducts = WashMachineProducts;
+            filteredProducts = sourceProducts.ToList();
         }
         else
         {
-            FilteredProducts = WashMachineProducts
-                .Where(p => p.BrandName.Equals(selectedBrand, StringComparison.OrdinalIgnoreCase))
+            filteredProducts = sourceProducts
+                .Where(p => propertySelector(p).Equals(selectedValue, StringComparison.OrdinalIgnoreCase))
                 .ToList();
         }
-
-        StateHasChanged();
     }
 
     protected string GetShopName(List<ShopsModel> shopsModels, Guid shopId)

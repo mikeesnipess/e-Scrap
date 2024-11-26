@@ -18,10 +18,10 @@
 else if (GasCookerProducts != null && GasCookerProducts.Count > 0)
 {
     <DropdownFilter BrandNameProducts="@GasCookerProducts.Select(p => p.BrandName).Distinct().ToList()"
-                    OnSelected="FilterProducts" />
+                    OnSelected="FilterBrandNameGasCookerProducts" />
 
     <div class="product-list">
-        @foreach (var product in FilteredProducts)
+        @foreach (var product in FilteredGasCookers)
         {
             var shopName = GetShopName(shopsModel, product.ShopId);
 
@@ -57,7 +57,7 @@ else
 @code {
     private bool loading = true;
     private List<GasCookerModel> GasCookerProducts = new();
-    private List<GasCookerModel> FilteredProducts = new();
+    private List<GasCookerModel> FilteredGasCookers = new();
     private List<ShopsModel> shopsModel = new();
 
     protected override async Task OnInitializedAsync()
@@ -76,29 +76,39 @@ else
             .OrderByDescending(x => x.DiscountPrice)
             .ToList();
 
-        FilteredProducts = GasCookerProducts;
+        FilteredGasCookers = GasCookerProducts;
 
         loading = false;
         StateHasChanged();
     }
 
-    private void FilterProducts(string selectedBrand)
+    private void FilterBrandNameGasCookerProducts(string selectedBrand)
     {
-        Console.WriteLine($"Filtering products by brand: {selectedBrand}");
+        FilterProducts(
+            GasCookerProducts,
+            selectedBrand,
+            product => product.BrandName,
+            out FilteredGasCookers
+        );
+        StateHasChanged();
+    }
 
-        if (string.IsNullOrEmpty(selectedBrand))
+    private void FilterProducts<T>(IEnumerable<T> sourceProducts, string selectedValue, Func<T, string> propertySelector, out List<T> filteredProducts)
+    {
+        Console.WriteLine($"Filtering products by selected value: {selectedValue}");
+
+        if (string.IsNullOrEmpty(selectedValue))
         {
-            FilteredProducts = GasCookerProducts;
+            filteredProducts = sourceProducts.ToList();
         }
         else
         {
-            FilteredProducts = GasCookerProducts
-                .Where(p => p.BrandName.Equals(selectedBrand, StringComparison.OrdinalIgnoreCase))
+            filteredProducts = sourceProducts
+                .Where(p => propertySelector(p).Equals(selectedValue, StringComparison.OrdinalIgnoreCase))
                 .ToList();
         }
-
-        StateHasChanged();
     }
+
 
     private string GetShopName(List<ShopsModel> shopsModels, Guid shopId)
     {
