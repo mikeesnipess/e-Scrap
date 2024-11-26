@@ -1,11 +1,14 @@
 ﻿@page "/wash-machine"
 @using AutoMapper
+@using e_Scrap.Components.Pages.Filters
 @using e_Scrap.Models
 @using e_Scrap.Models.Common
 @using e_crap.Models.Common.WashMachine
 @inject HttpClient Http
 @inject IHttpClientFactory HttpClientFactory
 @inject IMapper mapper;
+@inject IJSRuntime JS
+@rendermode InteractiveServer
 
 <h3>Scraped Wash Machine Products</h3>
 
@@ -15,8 +18,11 @@
 }
 else if (WashMachineProducts != null && WashMachineProducts.Count > 0)
 {
+    <DropdownFilter BrandNameProducts="@WashMachineProducts.Select(p => p.BrandName).Distinct().ToList()"
+                    OnSelected="FilterProducts" />
+
     <div class="product-list">
-        @foreach (var product in WashMachineProducts)
+        @foreach (var product in FilteredProducts)
         {
             var shopName = GetShopName(shopsModel, product.ShopId);
 
@@ -53,6 +59,7 @@ else
 @code {
     private bool loading = true;
     private List<WashMachineModel> WashMachineProducts = new();
+    private List<WashMachineModel> FilteredProducts = new();
     private List<ShopsModel> shopsModel = new();
 
     protected override async Task OnInitializedAsync()
@@ -68,9 +75,27 @@ else
             .OrderByDescending(x => x.DiscountPrice)
             .ToList();
 
-
+        FilteredProducts = WashMachineProducts;
         loading = false;
     }
+    private void FilterProducts(string selectedBrand)
+    {
+        Console.WriteLine($"Filtering products by brand: {selectedBrand}");
+
+        if (string.IsNullOrEmpty(selectedBrand))
+        {
+            FilteredProducts = WashMachineProducts;
+        }
+        else
+        {
+            FilteredProducts = WashMachineProducts
+                .Where(p => p.BrandName.Equals(selectedBrand, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
+
+        StateHasChanged();
+    }
+
     protected string GetShopName(List<ShopsModel> shopsModels, Guid shopId)
     {
         return shopsModel.FirstOrDefault(s => s.Id == shopId)?.Name ?? "Unknown Shop";
