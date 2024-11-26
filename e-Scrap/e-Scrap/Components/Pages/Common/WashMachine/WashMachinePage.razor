@@ -24,31 +24,38 @@ else if (WashMachineProducts != null && WashMachineProducts.Count > 0)
                     OnMaxPriceChanged="FilterByMaxPrice" />
 
     <div class="product-list">
-        @foreach (var product in FilteredWashMachine)
+        @if (FilteredWashMachine.Count != 0)
         {
-            var shopName = GetShopName(shopsModel, product.ShopId);
+            @foreach (var product in FilteredWashMachine)
+            {
+                var shopName = GetShopName(shopsModel, product.ShopId);
 
-            <div class="product-card">
-                <h5>@product.Name</h5>
-                <img src="@product.ImageSmallUrl" alt="Lipseste imaginea" width="200" height="200" />
-                <p><strong>Price:</strong> @product.StandardPrice.ToString("C")</p>
+                <div class="product-card">
+                    <h5>@product.Name</h5>
+                    <img src="@product.ImageSmallUrl" alt="Lipseste imaginea" width="200" height="200" />
+                    <p><strong>Price:</strong> @product.StandardPrice.ToString("C")</p>
 
-                @if (product.DiscountPercentage > 0)
-                {
-                    <p style="color: red"><strong>Discount Price:</strong> @product.DiscountPrice.ToString("C")</p>
-                    <p style="color: red"><strong>Discount:</strong> @product.DiscountPercentage%</p>
-                }
-                else
-                {
-                    <p><strong>Discount Price:</strong> @product.DiscountPrice.ToString("C")</p>
-                    <p><strong>Discount:</strong> @product.DiscountPercentage%</p>
-                }
+                    @if (product.DiscountPercentage > 0)
+                    {
+                        <p style="color: red"><strong>Discount Price:</strong> @product.DiscountPrice.ToString("C")</p>
+                        <p style="color: red"><strong>Discount:</strong> @product.DiscountPercentage%</p>
+                    }
+                    else
+                    {
+                        <p><strong>Discount Price:</strong> @product.DiscountPrice.ToString("C")</p>
+                        <p><strong>Discount:</strong> @product.DiscountPercentage%</p>
+                    }
 
-                <p><strong>Brand Name:</strong> @product.BrandName</p>
-                <p><strong>Shop: </strong> @shopName</p>
-                <p><strong>Description:</strong> @product.ProductDescription</p>
-                <a href="@product.LinkUrl" target="_blank" rel="noopener noreferrer">View Product</a>
-            </div>
+                    <p><strong>Brand Name:</strong> @product.BrandName</p>
+                    <p><strong>Shop: </strong> @shopName</p>
+                    <p><strong>Description:</strong> @product.ProductDescription</p>
+                    <a href="@product.LinkUrl" target="_blank" rel="noopener noreferrer">View Product</a>
+                </div>
+            }
+        }
+        else
+        {
+            <p>Does not exist products in this range...</p>
         }
     </div>
 }
