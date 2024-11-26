@@ -17,8 +17,10 @@
 }
 else if (GasCookerProducts != null && GasCookerProducts.Count > 0)
 {
-    <DropdownFilter BrandNameProducts="@GasCookerProducts.Select(p => p.BrandName).Distinct().ToList()"
-                    OnSelected="FilterBrandNameGasCookerProducts" />
+    <DropdownFilter BrandNameProducts="@GasCookerProducts.Select(p => p.BrandName.ToUpper()).Distinct().ToList()"
+                    OnSelectedBrandName="FilterBrandNameGasCookerProducts"
+                    OnMinPriceChanged="FilterByMinPrice"
+                    OnMaxPriceChanged="FilterByMaxPrice" />
 
     <div class="product-list">
         @foreach (var product in FilteredGasCookers)
@@ -59,6 +61,9 @@ else
     private List<GasCookerModel> GasCookerProducts = new();
     private List<GasCookerModel> FilteredGasCookers = new();
     private List<ShopsModel> shopsModel = new();
+    private string SelectedBrand { get; set; }
+    private int? MinPriceFilter { get; set; }
+    private int? MaxPriceFilter { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -71,25 +76,43 @@ else
         GasCookerProducts = await GetAltexGasCookerProductsAsync(client);
         GasCookerProducts.AddRange(await GetEMaGasCookerProductsAsync(client));
 
-        GasCookerProducts = GasCookerProducts
-            .Where(x => x.DiscountPrice >= 800 && x.DiscountPrice <= 1501)
-            .OrderByDescending(x => x.DiscountPrice)
-            .ToList();
-
         FilteredGasCookers = GasCookerProducts;
-
         loading = false;
         StateHasChanged();
     }
 
     private void FilterBrandNameGasCookerProducts(string selectedBrand)
     {
-        FilterProducts(
-            GasCookerProducts,
-            selectedBrand,
-            product => product.BrandName,
-            out FilteredGasCookers
-        );
+        SelectedBrand = selectedBrand;
+        ApplyPriceFilter(); 
+    }
+
+
+    private void FilterByMinPrice(int? minPrice)
+    {
+        MinPriceFilter = minPrice;
+        ApplyPriceFilter();
+    }
+
+    private void FilterByMaxPrice(int? maxPrice)
+    {
+        MaxPriceFilter = maxPrice;
+        ApplyPriceFilter();
+    }
+
+    private void ApplyPriceFilter()
+    {
+        var filteredByBrand = string.IsNullOrEmpty(SelectedBrand)
+        ? GasCookerProducts
+        : GasCookerProducts.Where(p => p.BrandName.Equals(SelectedBrand, StringComparison.OrdinalIgnoreCase));
+
+        FilteredGasCookers = filteredByBrand
+            .Where(p =>
+                (!MinPriceFilter.HasValue || p.StandardPrice >= MinPriceFilter.Value) &&
+                (!MaxPriceFilter.HasValue || p.StandardPrice <= MaxPriceFilter.Value))
+            .OrderByDescending(x=>x.DiscountPercentage > 0 ? x.DiscountPrice : x.StandardPrice)
+            .ToList();
+
         StateHasChanged();
     }
 

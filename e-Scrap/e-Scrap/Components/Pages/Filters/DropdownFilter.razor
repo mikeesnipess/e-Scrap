@@ -5,11 +5,19 @@
     <label for="Products">Brand name filter</label>
     <select id="Products" @onchange="HandleSelectionChanged">
         <option value="">All Brands</option>
-        @foreach (var product in BrandNameProducts.OrderBy(x=>x))
+        @foreach (var product in BrandNameProducts.OrderBy(x => x))
         {
             <option value="@product">@product</option>
         }
     </select>
+    <br />
+    <label for="priceAverage">
+        Set average price from Minimum:
+        <input type="number" id="fromPrice" min="1" @bind-value="MinPrice" />
+        to Maximum:
+        <input type="number" id="toPrice" min="1" @bind-value="MaxPrice" />
+        <input type="submit" value="Confirm" @onclick="ApplyPriceFilter" />
+    </label>
 </div>
 
 @code {
@@ -17,11 +25,26 @@
     public List<string> BrandNameProducts { get; set; }
 
     [Parameter]
-    public EventCallback<string> OnSelected { get; set; }
+    public EventCallback<string> OnSelectedBrandName { get; set; }
+
+    [Parameter]
+    public EventCallback<int?> OnMinPriceChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<int?> OnMaxPriceChanged { get; set; }
+
+    private int? MinPrice { get; set; }
+    private int? MaxPrice { get; set; }
 
     private async Task HandleSelectionChanged(ChangeEventArgs e)
     {
         var selectedValue = e.Value?.ToString();
-        await OnSelected.InvokeAsync(selectedValue);
+        await OnSelectedBrandName.InvokeAsync(selectedValue);
+    }
+
+    private async Task ApplyPriceFilter()
+    {
+        await OnMinPriceChanged.InvokeAsync(MinPrice);
+        await OnMaxPriceChanged.InvokeAsync(MaxPrice);
     }
 }
