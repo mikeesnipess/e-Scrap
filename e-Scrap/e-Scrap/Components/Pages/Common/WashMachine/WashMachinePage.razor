@@ -18,8 +18,10 @@
 }
 else if (WashMachineProducts != null && WashMachineProducts.Count > 0)
 {
-    <DropdownFilter BrandNameProducts="@WashMachineProducts.Select(p => p.BrandName).Distinct().ToList()"
-                    OnSelected="FilterBrandNameWashMachineProducts" />
+    <DropdownFilter BrandNameProducts="@WashMachineProducts.Select(p => p.BrandName.ToUpper()).Distinct().ToList()"
+                    OnSelectedBrandName="FilterBrandNameWashMachineProducts"
+                    OnMinPriceChanged="FilterByMinPrice"
+                    OnMaxPriceChanged="FilterByMaxPrice" />
 
     <div class="product-list">
         @foreach (var product in FilteredWashMachine)
@@ -61,6 +63,9 @@ else
     private List<WashMachineModel> WashMachineProducts = new();
     private List<WashMachineModel> FilteredWashMachine = new();
     private List<ShopsModel> shopsModel = new();
+    private string SelectedBrand { get; set; }
+    private int? MinPriceFilter { get; set; }
+    private int? MaxPriceFilter { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -70,23 +75,42 @@ else
         shopsModel = await shops.Content.ReadFromJsonAsync<List<ShopsModel>>();
         WashMachineProducts = await GetAltexWashMachineProductAsync(client);
         WashMachineProducts.AddRange(await GetEMagWashMachine(client));
-        WashMachineProducts = WashMachineProducts
-            .Where(x => x.DiscountPrice >= 800 && x.DiscountPrice <= 1500)
-            .OrderByDescending(x => x.DiscountPrice)
-            .ToList();
-
         FilteredWashMachine = WashMachineProducts;
         loading = false;
     }
 
     private void FilterBrandNameWashMachineProducts(string selectedBrand)
     {
-        FilterProducts(
-            WashMachineProducts,
-            selectedBrand,
-            product => product.BrandName,
-            out FilteredWashMachine
-        );
+        SelectedBrand = selectedBrand;
+        ApplyPriceFilter();
+    }
+
+
+    private void FilterByMinPrice(int? minPrice)
+    {
+        MinPriceFilter = minPrice;
+        ApplyPriceFilter();
+    }
+
+    private void FilterByMaxPrice(int? maxPrice)
+    {
+        MaxPriceFilter = maxPrice;
+        ApplyPriceFilter();
+    }
+
+    private void ApplyPriceFilter()
+    {
+        var filteredByBrand = string.IsNullOrEmpty(SelectedBrand)
+        ? WashMachineProducts
+        : WashMachineProducts.Where(p => p.BrandName.Equals(SelectedBrand, StringComparison.OrdinalIgnoreCase));
+
+        FilteredWashMachine = filteredByBrand
+            .Where(p =>
+                (!MinPriceFilter.HasValue || p.StandardPrice >= MinPriceFilter.Value) &&
+                (!MaxPriceFilter.HasValue || p.StandardPrice <= MaxPriceFilter.Value))
+            .OrderByDescending(x => x.DiscountPercentage > 0 ? x.DiscountPrice : x.StandardPrice)
+            .ToList();
+
         StateHasChanged();
     }
 
