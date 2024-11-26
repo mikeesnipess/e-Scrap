@@ -1,0 +1,27 @@
+﻿@inject IJSRuntime JS
+@rendermode InteractiveServer
+
+<div>
+    <label for="Products">Brand name filter</label>
+    <select id="Products" @onchange="HandleSelectionChanged">
+        <option value="">All Brands</option>
+        @foreach (var product in BrandNameProducts.OrderBy(x=>x))
+        {
+            <option value="@product">@product</option>
+        }
+    </select>
+</div>
+
+@code {
+    [Parameter]
+    public List<string> BrandNameProducts { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnSelected { get; set; }
+
+    private async Task HandleSelectionChanged(ChangeEventArgs e)
+    {
+        var selectedValue = e.Value?.ToString();
+        await OnSelected.InvokeAsync(selectedValue);
+    }
+}

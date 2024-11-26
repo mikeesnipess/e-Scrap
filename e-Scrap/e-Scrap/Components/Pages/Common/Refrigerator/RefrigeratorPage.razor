@@ -1,11 +1,14 @@
 ﻿@page "/refrigerator"
 @using AutoMapper
+@using e_Scrap.Components.Pages.Filters
 @using e_Scrap.Models
 @using e_Scrap.Models.Common
 @using global::Models.Common.Refrigerator
 @inject HttpClient Http
 @inject IHttpClientFactory HttpClientFactory
 @inject IMapper mapper;
+@inject IJSRuntime JS
+@rendermode InteractiveServer
 
 <h3>Scraped Refrigerator Products</h3>
 
@@ -15,8 +18,10 @@
 }
 else if (RefrigeratorProducts != null && RefrigeratorProducts.Count > 0)
 {
+    <DropdownFilter BrandNameProducts="@RefrigeratorProducts.Select(p => p.BrandName).Distinct().ToList()"
+                    OnSelected="FilterProducts" />
     <div class="product-list">
-        @foreach (var product in RefrigeratorProducts)
+        @foreach (var product in FilteredProducts)
         {
             var shopName = GetShopName(shopsModel, product.ShopId);
 
@@ -53,6 +58,7 @@ else
 @code {
     private bool loading = true;
     private List<RefrigeratorModel> RefrigeratorProducts = new();
+    private List<RefrigeratorModel> FilteredProducts = new();
     private List<ShopsModel> shopsModel = new();
 
     protected override async Task OnInitializedAsync()
@@ -68,9 +74,28 @@ else
             .OrderByDescending(x => x.DiscountPrice)
             .ToList();
 
-
+        FilteredProducts = RefrigeratorProducts;
         loading = false;
+        StateHasChanged();
     }
+    private void FilterProducts(string selectedBrand)
+    {
+        Console.WriteLine($"Filtering products by brand: {selectedBrand}");
+
+        if (string.IsNullOrEmpty(selectedBrand))
+        {
+            FilteredProducts = RefrigeratorProducts;
+        }
+        else
+        {
+            FilteredProducts = RefrigeratorProducts
+                .Where(p => p.BrandName.Equals(selectedBrand, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
+
+        StateHasChanged();
+    }
+
     protected string GetShopName(List<ShopsModel> shopsModels, Guid shopId)
     {
         return shopsModel.FirstOrDefault(s => s.Id == shopId)?.Name ?? "Unknown Shop";
@@ -114,6 +139,6 @@ else
             Console.WriteLine($"Exception occurred while fetching data: {ex.Message}");
         }
 
-        return new List<T>(); 
+        return new List<T>();
     }
 }

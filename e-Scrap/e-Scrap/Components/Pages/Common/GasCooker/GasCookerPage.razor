@@ -1,13 +1,13 @@
-﻿@page "/aragazuri"
+﻿@page "/gas-cooker"
 @using AutoMapper
+@using e_Scrap.Components.Pages.Filters
 @using e_Scrap.Models
 @using e_Scrap.Models.Common.GasCooker
-@using AutoMapper
-@using e_Scrap.Models
-@using e_Scrap.Models.Common
 @inject HttpClient Http
 @inject IHttpClientFactory HttpClientFactory
-@inject IMapper mapper;
+@inject IMapper mapper
+@inject IJSRuntime JS
+@rendermode InteractiveServer
 
 <h3>Scraped Gas Cooker Products</h3>
 
@@ -17,14 +17,17 @@
 }
 else if (GasCookerProducts != null && GasCookerProducts.Count > 0)
 {
+    <DropdownFilter BrandNameProducts="@GasCookerProducts.Select(p => p.BrandName).Distinct().ToList()"
+                    OnSelected="FilterProducts" />
+
     <div class="product-list">
-        @foreach (var product in GasCookerProducts)
+        @foreach (var product in FilteredProducts)
         {
             var shopName = GetShopName(shopsModel, product.ShopId);
 
             <div class="product-card">
                 <h5>@product.Name</h5>
-                <img src="@product.ImageSmallUrl" alt="Lipseste imaginea" width="200" height="200" />
+                <img src="@product.ImageSmallUrl" alt="Image not available" width="200" height="200" />
                 <p><strong>Price:</strong> @product.StandardPrice.ToString("C")</p>
 
                 @if (product.DiscountPercentage > 0)
@@ -46,7 +49,6 @@ else if (GasCookerProducts != null && GasCookerProducts.Count > 0)
         }
     </div>
 }
-
 else
 {
     <p>No products found.</p>
@@ -55,65 +57,81 @@ else
 @code {
     private bool loading = true;
     private List<GasCookerModel> GasCookerProducts = new();
+    private List<GasCookerModel> FilteredProducts = new();
     private List<ShopsModel> shopsModel = new();
 
     protected override async Task OnInitializedAsync()
     {
         loading = true;
         var client = HttpClientFactory.CreateClient("API");
+
         var shops = await client.GetAsync("Shops/getShops");
         shopsModel = await shops.Content.ReadFromJsonAsync<List<ShopsModel>>();
+
         GasCookerProducts = await GetAltexGasCookerProductsAsync(client);
         GasCookerProducts.AddRange(await GetEMaGasCookerProductsAsync(client));
+
         GasCookerProducts = GasCookerProducts
-            .Where(x => x.DiscountPrice >= 800 && x.DiscountPrice <= 1500)
+            .Where(x => x.DiscountPrice >= 800 && x.DiscountPrice <= 1501)
             .OrderByDescending(x => x.DiscountPrice)
             .ToList();
 
+        FilteredProducts = GasCookerProducts;
 
         loading = false;
-    }
-    protected string GetShopName(List<ShopsModel> shopsModels, Guid shopId)
-    {
-        return shopsModel.FirstOrDefault(s => s.Id == shopId)?.Name ?? "Unknown Shop";
+        StateHasChanged();
     }
 
-    protected async Task<List<GasCookerModel>> GetAltexGasCookerProductsAsync(HttpClient client)
+    private void FilterProducts(string selectedBrand)
+    {
+        Console.WriteLine($"Filtering products by brand: {selectedBrand}");
+
+        if (string.IsNullOrEmpty(selectedBrand))
+        {
+            FilteredProducts = GasCookerProducts;
+        }
+        else
+        {
+            FilteredProducts = GasCookerProducts
+                .Where(p => p.BrandName.Equals(selectedBrand, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
+
+        StateHasChanged();
+    }
+
+    private string GetShopName(List<ShopsModel> shopsModels, Guid shopId)
+    {
+        return shopsModels.FirstOrDefault(s => s.Id == shopId)?.Name ?? "Unknown Shop";
+    }
+
+    private async Task<List<GasCookerModel>> GetAltexGasCookerProductsAsync(HttpClient client)
     {
         var endpoint = "AltexGasCooker/ScrapeGasCookerAltexProducts";
-        var products = await GetDataAsync<GasCookerModel>(client, endpoint);
-
-        return products;
+        return await GetDataAsync<GasCookerModel>(client, endpoint);
     }
 
-    protected async Task<List<GasCookerModel>> GetEMaGasCookerProductsAsync(HttpClient client)
+    private async Task<List<GasCookerModel>> GetEMaGasCookerProductsAsync(HttpClient client)
     {
         var endpoint = "eMagGasCooker/eMagScrapeGasCookerProducts";
-        var products = await GetDataAsync<GasCookerModel>(client, endpoint);
-
-        return products;
+        return await GetDataAsync<GasCookerModel>(client, endpoint);
     }
 
-    protected async Task<List<T>> GetDataAsync<T>(HttpClient client, string endpoint) where T : class
+    private async Task<List<T>> GetDataAsync<T>(HttpClient client, string endpoint) where T : class
     {
         try
         {
             var response = await client.GetAsync(endpoint);
-
             if (response.IsSuccessStatusCode)
             {
-                var data = await response.Content.ReadFromJsonAsync<List<T>>();
-                return data ?? new List<T>();
+                return await response.Content.ReadFromJsonAsync<List<T>>() ?? new List<T>();
             }
-            else
-            {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Error: {response.StatusCode}, Content: {errorContent}");
-            }
+
+            Console.WriteLine($"Error fetching data: {response.StatusCode}");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Exception occurred while fetching data: {ex.Message}");
+            Console.WriteLine($"Exception while fetching data: {ex.Message}");
         }
 
         return new List<T>();
