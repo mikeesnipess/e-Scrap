@@ -21,7 +21,8 @@ else if (RefrigeratorProducts != null && RefrigeratorProducts.Count > 0)
     <DropdownFilter BrandNameProducts="@RefrigeratorProducts.Select(p => p.BrandName.ToUpper()).Distinct().ToList()"
                     OnSelectedBrandName="FilterBrandNameRefrigeratorProducts"
                     OnMinPriceChanged="FilterByMinPrice"
-                    OnMaxPriceChanged="FilterByMaxPrice" />
+                    OnMaxPriceChanged="FilterByMaxPrice"
+                    IsOnlyDiscountActive="FilterByDiscountPercentage" />
     <div class="product-list">
         @if (FilteredRefrigerators.Count != 0)
         {
@@ -72,6 +73,7 @@ else
     private string SelectedBrand { get; set; }
     private int? MinPriceFilter { get; set; }
     private int? MaxPriceFilter { get; set; }
+    private bool IsDiscountView { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -106,17 +108,28 @@ else
         ApplyPriceFilter();
     }
 
+    private void FilterByDiscountPercentage(bool isDiscount)
+    {
+        IsDiscountView = isDiscount;
+        ApplyPriceFilter();
+    }
+
     private void ApplyPriceFilter()
     {
         var filteredByBrand = string.IsNullOrEmpty(SelectedBrand)
-        ? RefrigeratorProducts
-        : RefrigeratorProducts.Where(p => p.BrandName.Equals(SelectedBrand, StringComparison.OrdinalIgnoreCase));
+            ? RefrigeratorProducts
+            : RefrigeratorProducts.Where(p => p.BrandName.Equals(SelectedBrand, StringComparison.OrdinalIgnoreCase));
 
-        FilteredRefrigerators = filteredByBrand
-            .Where(p =>
-                (!MinPriceFilter.HasValue || p.StandardPrice >= MinPriceFilter.Value) &&
-                (!MaxPriceFilter.HasValue || p.StandardPrice <= MaxPriceFilter.Value))
-            .OrderByDescending(x => x.DiscountPercentage > 0 ? x.DiscountPrice : x.StandardPrice)
+        var filteredByPrice = filteredByBrand.Where(p =>
+            (!MinPriceFilter.HasValue || p.StandardPrice >= MinPriceFilter.Value) &&
+            (!MaxPriceFilter.HasValue || p.StandardPrice <= MaxPriceFilter.Value));
+
+        FilteredRefrigerators = filteredByPrice
+            .Where(p => !IsDiscountView || p.DiscountPercentage > 0)
+            .OrderByDescending(p =>
+                IsDiscountView
+                    ? p.DiscountPercentage
+                    : p.DiscountPercentage > 0 ? p.DiscountPrice : p.StandardPrice)
             .ToList();
 
         StateHasChanged();

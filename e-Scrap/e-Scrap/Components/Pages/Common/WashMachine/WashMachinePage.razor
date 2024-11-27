@@ -21,7 +21,8 @@ else if (WashMachineProducts != null && WashMachineProducts.Count > 0)
     <DropdownFilter BrandNameProducts="@WashMachineProducts.Select(p => p.BrandName.ToUpper()).Distinct().ToList()"
                     OnSelectedBrandName="FilterBrandNameWashMachineProducts"
                     OnMinPriceChanged="FilterByMinPrice"
-                    OnMaxPriceChanged="FilterByMaxPrice" />
+                    OnMaxPriceChanged="FilterByMaxPrice"
+                    IsOnlyDiscountActive="FilterByDiscountPercentage" />
 
     <div class="product-list">
         @if (FilteredWashMachine.Count != 0)
@@ -73,6 +74,7 @@ else
     private string SelectedBrand { get; set; }
     private int? MinPriceFilter { get; set; }
     private int? MaxPriceFilter { get; set; }
+    private bool IsDiscountView { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -105,17 +107,28 @@ else
         ApplyPriceFilter();
     }
 
+    private void FilterByDiscountPercentage(bool isDiscount)
+    {
+        IsDiscountView = isDiscount;
+        ApplyPriceFilter();
+    }
+
     private void ApplyPriceFilter()
     {
         var filteredByBrand = string.IsNullOrEmpty(SelectedBrand)
-        ? WashMachineProducts
-        : WashMachineProducts.Where(p => p.BrandName.Equals(SelectedBrand, StringComparison.OrdinalIgnoreCase));
+            ? WashMachineProducts
+            : WashMachineProducts.Where(p => p.BrandName.Equals(SelectedBrand, StringComparison.OrdinalIgnoreCase));
 
-        FilteredWashMachine = filteredByBrand
-            .Where(p =>
-                (!MinPriceFilter.HasValue || p.StandardPrice >= MinPriceFilter.Value) &&
-                (!MaxPriceFilter.HasValue || p.StandardPrice <= MaxPriceFilter.Value))
-            .OrderByDescending(x => x.DiscountPercentage > 0 ? x.DiscountPrice : x.StandardPrice)
+        var filteredByPrice = filteredByBrand.Where(p =>
+            (!MinPriceFilter.HasValue || p.StandardPrice >= MinPriceFilter.Value) &&
+            (!MaxPriceFilter.HasValue || p.StandardPrice <= MaxPriceFilter.Value));
+
+        FilteredWashMachine = filteredByPrice
+            .Where(p => !IsDiscountView || p.DiscountPercentage > 0)
+            .OrderByDescending(p =>
+                IsDiscountView
+                    ? p.DiscountPercentage 
+                    : p.DiscountPercentage > 0 ? p.DiscountPrice : p.StandardPrice) 
             .ToList();
 
         StateHasChanged();
