@@ -20,7 +20,8 @@ else if (GasCookerProducts != null && GasCookerProducts.Count > 0)
     <DropdownFilter BrandNameProducts="@GasCookerProducts.Select(p => p.BrandName.ToUpper()).Distinct().ToList()"
                     OnSelectedBrandName="FilterBrandNameGasCookerProducts"
                     OnMinPriceChanged="FilterByMinPrice"
-                    OnMaxPriceChanged="FilterByMaxPrice" />
+                    OnMaxPriceChanged="FilterByMaxPrice"
+                    IsOnlyDiscountActive="FilterByDiscountPercentage" /> 
 
     <div class="product-list">
         @if (FilteredGasCookers.Count != 0)
@@ -71,6 +72,7 @@ else
     private string SelectedBrand { get; set; }
     private int? MinPriceFilter { get; set; }
     private int? MaxPriceFilter { get; set; }
+    private bool IsDiscountView { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -107,21 +109,36 @@ else
         ApplyPriceFilter();
     }
 
+    private void FilterByDiscountPercentage(bool isDiscount)
+    {
+        IsDiscountView = isDiscount;
+        ApplyPriceFilter();
+    }
+
     private void ApplyPriceFilter()
     {
+        // Filter by brand first
         var filteredByBrand = string.IsNullOrEmpty(SelectedBrand)
-        ? GasCookerProducts
-        : GasCookerProducts.Where(p => p.BrandName.Equals(SelectedBrand, StringComparison.OrdinalIgnoreCase));
+            ? GasCookerProducts
+            : GasCookerProducts.Where(p => p.BrandName.Equals(SelectedBrand, StringComparison.OrdinalIgnoreCase));
 
-        FilteredGasCookers = filteredByBrand
-            .Where(p =>
-                (!MinPriceFilter.HasValue || p.StandardPrice >= MinPriceFilter.Value) &&
-                (!MaxPriceFilter.HasValue || p.StandardPrice <= MaxPriceFilter.Value))
-            .OrderByDescending(x => x.DiscountPercentage > 0 ? x.DiscountPrice : x.StandardPrice)
+        // Apply price filters
+        var filteredByPrice = filteredByBrand.Where(p =>
+            (!MinPriceFilter.HasValue || p.StandardPrice >= MinPriceFilter.Value) &&
+            (!MaxPriceFilter.HasValue || p.StandardPrice <= MaxPriceFilter.Value));
+
+        // Additional filter for discounts and sorting
+        FilteredGasCookers = filteredByPrice
+            .Where(p => !IsDiscountView || p.DiscountPercentage > 0) // Filter by discount if required
+            .OrderByDescending(p =>
+                IsDiscountView
+                    ? p.DiscountPercentage // Sort by discount percentage in discount view
+                    : p.DiscountPercentage > 0 ? p.DiscountPrice : p.StandardPrice) // Sort by price otherwise
             .ToList();
 
         StateHasChanged();
     }
+
 
     private void FilterProducts<T>(IEnumerable<T> sourceProducts, string selectedValue, Func<T, string> propertySelector, out List<T> filteredProducts)
     {

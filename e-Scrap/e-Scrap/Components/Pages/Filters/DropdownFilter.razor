@@ -18,6 +18,11 @@
         <input type="number" id="toPrice" min="1" @bind-value="MaxPrice" />
         <input type="submit" value="Confirm" @onclick="ApplyPriceFilter" />
     </label>
+    <br />
+    <label for="isDiscount">
+        Show only Discount?
+        <input type="checkbox" id="verifyActivity" @bind="IsOnlyDiscount" @bind:event="onchange" />
+    </label>
 </div>
 
 @code {
@@ -33,8 +38,24 @@
     [Parameter]
     public EventCallback<int?> OnMaxPriceChanged { get; set; }
 
+    [Parameter]
+    public EventCallback<bool> IsOnlyDiscountActive { get; set; }
+
     private int? MinPrice { get; set; }
     private int? MaxPrice { get; set; }
+    private bool _isOnlyDiscount;
+    private bool IsOnlyDiscount
+    {
+        get => _isOnlyDiscount;
+        set
+        {
+            if (_isOnlyDiscount != value)
+            {
+                _isOnlyDiscount = value;
+                IsDiscountActive();
+            }
+        }
+    }
 
     private async Task HandleSelectionChanged(ChangeEventArgs e)
     {
@@ -46,5 +67,10 @@
     {
         await OnMinPriceChanged.InvokeAsync(MinPrice);
         await OnMaxPriceChanged.InvokeAsync(MaxPrice);
+    }
+
+    private async Task IsDiscountActive()
+    {
+        await IsOnlyDiscountActive.InvokeAsync(IsOnlyDiscount);
     }
 }
