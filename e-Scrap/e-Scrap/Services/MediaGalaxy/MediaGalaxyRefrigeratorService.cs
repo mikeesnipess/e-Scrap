@@ -1,18 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Models.Common.Refrigerator;
 
-namespace e.Services.Altex
+namespace e_Scrap.Services.MediaGalaxy
 {
-    public class AltexRefrigeratorService
+    public class MediaGalaxyRefrigeratorService
     {
         private readonly AppSettingsDbContext _context;
 
-        public AltexRefrigeratorService(AppSettingsDbContext context)
+        public MediaGalaxyRefrigeratorService(AppSettingsDbContext context)
         {
             _context = context;
         }
 
-        public async Task<List<RefrigeratorModel>> GetAltexRefrigerator()
+        public async Task<List<RefrigeratorModel>> GetMediaGalaxyRefrigerator()
         {
             var resultProducts = await _context.MediaGalaxyRefrigerator
                 .Select(r => new RefrigeratorModel

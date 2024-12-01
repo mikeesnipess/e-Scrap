@@ -4,35 +4,35 @@ using System.ComponentModel.DataAnnotations.Schema;
 public class AltexRefrigerator
 {
     [Key]
-    public Guid Id { get; set; }  // Guid
+    public Guid Id { get; set; }  
 
     [Required]
-    public string Name { get; set; }  // string
-    public int? ProductId { get; set; }  // Product ID (nullable)
+    public string Name { get; set; }  
+    public int? ProductId { get; set; }  
 
     [Column(TypeName = "decimal(18,2)")]
-    public decimal StandardPrice { get; set; }  // decimal
+    public decimal StandardPrice { get; set; }  
 
     [Column(TypeName = "decimal(18,2)")]
-    public decimal DiscountPrice { get; set; }  // decimal
+    public decimal DiscountPrice { get; set; }  
 
     [Required]
-    public decimal DiscountPercentage { get; set; } // decimal 
+    public decimal DiscountPercentage { get; set; } 
 
     [ForeignKey("Shop")]
-    public Guid ShopId { get; set; }  // Guid (foreign key from Shops table)
+    public Guid ShopId { get; set; }  
 
     [Required]
-    public string LinkUrl { get; set; }  // string
+    public string LinkUrl { get; set; }  
 
     [Required]
-    public string ProductDescription { get; set; }  // string
+    public string ProductDescription { get; set; }  
 
     [ForeignKey("Country")]
-    public string CountryId { get; set; }  // AlphaCode (foreign key from Countries table)
+    public string CountryId { get; set; }  
 
     [Required]
-    public string ProductType { get; set; }  // string
+    public string ProductType { get; set; }  
     public string ImageSmallUrl { get; set; }
     public string BrandName { get; set; }
 
