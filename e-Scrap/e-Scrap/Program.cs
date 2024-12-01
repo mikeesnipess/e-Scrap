@@ -3,6 +3,8 @@ using e_crap.Services.eMag;
 using e_Scrap.Components;
 using e_Scrap.Mapping;
 using e_Scrap.Services.Altex;
+using e_Scrap.Services.MediaGalaxy;
+using eScrap.Services.MediaGalaxy;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -29,6 +31,10 @@ builder.Services.AddScoped<AltexWashMachineService>();
 builder.Services.AddScoped<eMagGasCookerService>();
 builder.Services.AddScoped<eMagRefrigeratorService>();
 builder.Services.AddScoped<eMagWashMachineService>();
+builder.Services.AddScoped<DedemanRefrigeratorService>();
+builder.Services.AddScoped<MediaGalaxyRefrigeratorService>();
+builder.Services.AddScoped<MediaGalaxyGasCookerService>();
+builder.Services.AddScoped<MediaGalaxyWashMachineService>();
 builder.Services.AddScoped<ShopsService>();
 
 // Add services to the container

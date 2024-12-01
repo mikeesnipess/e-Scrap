@@ -83,12 +83,79 @@ else
         shopsModel = await shops.Content.ReadFromJsonAsync<List<ShopsModel>>();
         RefrigeratorProducts = await GetAltexRefrigeratorProductsAsync(client);
         RefrigeratorProducts.AddRange(await GetEMagRefrigeratorProductsAsync(client));
+        RefrigeratorProducts.AddRange(await GetDedemanRefrigeratorProductsAsync(client));
+        RefrigeratorProducts.AddRange(await GetMediaGalaxyRefrigeratorProductsAsync(client));
 
         FilteredRefrigerators = RefrigeratorProducts;
         loading = false;
         StateHasChanged();
     }
 
+    #region ShopsAPI
+    protected string GetShopName(List<ShopsModel> shopsModels, Guid shopId)
+    {
+        return shopsModel.FirstOrDefault(s => s.Id == shopId)?.Name ?? "Unknown Shop";
+    }
+
+    protected async Task<List<RefrigeratorModel>> GetAltexRefrigeratorProductsAsync(HttpClient client)
+    {
+        var endpoint = "AltexRefrigerator/ScrapeRefrigeratorAltexProducts";
+        var products = await GetDataAsync<RefrigeratorModel>(client, endpoint);
+
+        return products;
+    }
+
+    protected async Task<List<RefrigeratorModel>> GetEMagRefrigeratorProductsAsync(HttpClient client)
+    {
+        var endpoint = "eMagRefrigerator/eMagScrapeRefrigeratorProducts";
+        var products = await GetDataAsync<RefrigeratorModel>(client, endpoint);
+
+        return products;
+    }
+
+    protected async Task<List<RefrigeratorModel>> GetDedemanRefrigeratorProductsAsync(HttpClient client)
+    {
+        var endpoint = "DedemanRefrigerator/ScrapeRefrigeratorDedemanProducts";
+        var products = await GetDataAsync<RefrigeratorModel>(client, endpoint);
+
+        return products;
+    }
+
+    protected async Task<List<RefrigeratorModel>> GetMediaGalaxyRefrigeratorProductsAsync(HttpClient client)
+    {
+        var endpoint = "MediaGalaxyRefrigerator/ScrapeRefrigeratorMediaGalaxyProducts";
+        var products = await GetDataAsync<RefrigeratorModel>(client, endpoint);
+
+        return products;
+    }
+    #endregion
+
+    protected async Task<List<T>> GetDataAsync<T>(HttpClient client, string endpoint) where T : class
+    {
+        try
+        {
+            var response = await client.GetAsync(endpoint);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadFromJsonAsync<List<T>>();
+                return data ?? new List<T>();
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Error: {response.StatusCode}, Content: {errorContent}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception occurred while fetching data: {ex.Message}");
+        }
+
+        return new List<T>();
+    }
+
+    #region Filters
     private void FilterBrandNameRefrigeratorProducts(string selectedBrand)
     {
         SelectedBrand = selectedBrand;
@@ -150,50 +217,5 @@ else
                 .ToList();
         }
     }
-
-    protected string GetShopName(List<ShopsModel> shopsModels, Guid shopId)
-    {
-        return shopsModel.FirstOrDefault(s => s.Id == shopId)?.Name ?? "Unknown Shop";
-    }
-
-    protected async Task<List<RefrigeratorModel>> GetAltexRefrigeratorProductsAsync(HttpClient client)
-    {
-        var endpoint = "AltexRefrigerator/ScrapeRefrigeratorAltexProducts";
-        var products = await GetDataAsync<RefrigeratorModel>(client, endpoint);
-
-        return products;
-    }
-
-    protected async Task<List<RefrigeratorModel>> GetEMagRefrigeratorProductsAsync(HttpClient client)
-    {
-        var endpoint = "eMagRefrigerator/eMagScrapeRefrigeratorProducts";
-        var products = await GetDataAsync<RefrigeratorModel>(client, endpoint);
-
-        return products;
-    }
-
-    protected async Task<List<T>> GetDataAsync<T>(HttpClient client, string endpoint) where T : class
-    {
-        try
-        {
-            var response = await client.GetAsync(endpoint);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var data = await response.Content.ReadFromJsonAsync<List<T>>();
-                return data ?? new List<T>();
-            }
-            else
-            {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Error: {response.StatusCode}, Content: {errorContent}");
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Exception occurred while fetching data: {ex.Message}");
-        }
-
-        return new List<T>();
-    }
+    #endregion
 }

@@ -84,10 +84,84 @@ else
         shopsModel = await shops.Content.ReadFromJsonAsync<List<ShopsModel>>();
         WashMachineProducts = await GetAltexWashMachineProductAsync(client);
         WashMachineProducts.AddRange(await GetEMagWashMachine(client));
+        WashMachineProducts.AddRange(await GetMediaGalaxyWashMachine(client));
         FilteredWashMachine = WashMachineProducts;
         loading = false;
     }
+   
+    #region ShopsAPI
+    private void FilterProducts<T>(IEnumerable<T> sourceProducts, string selectedValue, Func<T, string> propertySelector, out List<T> filteredProducts)
+    {
+        Console.WriteLine($"Filtering products by selected value: {selectedValue}");
 
+        if (string.IsNullOrEmpty(selectedValue))
+        {
+            filteredProducts = sourceProducts.ToList();
+        }
+        else
+        {
+            filteredProducts = sourceProducts
+                .Where(p => propertySelector(p).Equals(selectedValue, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
+    }
+
+    protected string GetShopName(List<ShopsModel> shopsModels, Guid shopId)
+    {
+        return shopsModel.FirstOrDefault(s => s.Id == shopId)?.Name ?? "Unknown Shop";
+    }
+
+    protected async Task<List<WashMachineModel>> GetAltexWashMachineProductAsync(HttpClient client)
+    {
+        var endpoint = "AltexWashMachine/ScrapeAltexWashMachine";
+        var products = await GetDataAsync<WashMachineModel>(client, endpoint);
+
+        return products;
+    }
+
+    protected async Task<List<WashMachineModel>> GetEMagWashMachine(HttpClient client)
+    {
+        var endpoint = "eMagWashMachine/ScrapeEMagWashMachine";
+        var products = await GetDataAsync<WashMachineModel>(client, endpoint);
+
+        return products;
+    }
+
+    protected async Task<List<WashMachineModel>> GetMediaGalaxyWashMachine(HttpClient client)
+    {
+        var endpoint = "MediaGalaxyWashMachine/ScrapeWashMachineMediaGalaxyProducts";
+        var products = await GetDataAsync<WashMachineModel>(client, endpoint);
+
+        return products;
+    }
+
+    protected async Task<List<T>> GetDataAsync<T>(HttpClient client, string endpoint) where T : class
+    {
+        try
+        {
+            var response = await client.GetAsync(endpoint);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadFromJsonAsync<List<T>>();
+                return data ?? new List<T>();
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Error: {response.StatusCode}, Content: {errorContent}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception occurred while fetching data: {ex.Message}");
+        }
+
+        return new List<T>();
+    }
+    #endregion
+
+    #region Filters
     private void FilterBrandNameWashMachineProducts(string selectedBrand)
     {
         SelectedBrand = selectedBrand;
@@ -127,72 +201,11 @@ else
             .Where(p => !IsDiscountView || p.DiscountPercentage > 0)
             .OrderByDescending(p =>
                 IsDiscountView
-                    ? p.DiscountPercentage 
-                    : p.DiscountPercentage > 0 ? p.DiscountPrice : p.StandardPrice) 
+                    ? p.DiscountPercentage
+                    : p.DiscountPercentage > 0 ? p.DiscountPrice : p.StandardPrice)
             .ToList();
 
         StateHasChanged();
     }
-
-    private void FilterProducts<T>(IEnumerable<T> sourceProducts, string selectedValue, Func<T, string> propertySelector, out List<T> filteredProducts)
-    {
-        Console.WriteLine($"Filtering products by selected value: {selectedValue}");
-
-        if (string.IsNullOrEmpty(selectedValue))
-        {
-            filteredProducts = sourceProducts.ToList();
-        }
-        else
-        {
-            filteredProducts = sourceProducts
-                .Where(p => propertySelector(p).Equals(selectedValue, StringComparison.OrdinalIgnoreCase))
-                .ToList();
-        }
-    }
-
-    protected string GetShopName(List<ShopsModel> shopsModels, Guid shopId)
-    {
-        return shopsModel.FirstOrDefault(s => s.Id == shopId)?.Name ?? "Unknown Shop";
-    }
-
-    protected async Task<List<WashMachineModel>> GetAltexWashMachineProductAsync(HttpClient client)
-    {
-        var endpoint = "AltexWashMachine/ScrapeAltexWashMachine";
-        var products = await GetDataAsync<WashMachineModel>(client, endpoint);
-
-        return products;
-    }
-
-    protected async Task<List<WashMachineModel>> GetEMagWashMachine(HttpClient client)
-    {
-        var endpoint = "eMagWashMachine/ScrapeEMagWashMachine";
-        var products = await GetDataAsync<WashMachineModel>(client, endpoint);
-
-        return products;
-    }
-
-    protected async Task<List<T>> GetDataAsync<T>(HttpClient client, string endpoint) where T : class
-    {
-        try
-        {
-            var response = await client.GetAsync(endpoint);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var data = await response.Content.ReadFromJsonAsync<List<T>>();
-                return data ?? new List<T>();
-            }
-            else
-            {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Error: {response.StatusCode}, Content: {errorContent}");
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Exception occurred while fetching data: {ex.Message}");
-        }
-
-        return new List<T>();
-    }
+    #endregion
 }

@@ -3,18 +3,18 @@ using Models.Common.Refrigerator;
 
 namespace e.Services.Altex
 {
-    public class AltexRefrigeratorService
+    public class DedemanRefrigeratorService
     {
         private readonly AppSettingsDbContext _context;
 
-        public AltexRefrigeratorService(AppSettingsDbContext context)
+        public DedemanRefrigeratorService(AppSettingsDbContext context)
         {
             _context = context;
         }
 
         public async Task<List<RefrigeratorModel>> GetAltexRefrigerator()
         {
-            var resultProducts = await _context.MediaGalaxyRefrigerator
+            var resultProducts = await _context.DedemanRefrigerator
                 .Select(r => new RefrigeratorModel
                 {
                     Id = r.Id,

@@ -1,21 +1,22 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using e_crap.Models.Common.WashMachine;
+using Microsoft.EntityFrameworkCore;
 using Models.Common.Refrigerator;
 
-namespace e.Services.Altex
+namespace eScrap.Services.MediaGalaxy
 {
-    public class AltexRefrigeratorService
+    public class MediaGalaxyWashMachineService
     {
         private readonly AppSettingsDbContext _context;
 
-        public AltexRefrigeratorService(AppSettingsDbContext context)
+        public MediaGalaxyWashMachineService(AppSettingsDbContext context)
         {
             _context = context;
         }
 
-        public async Task<List<RefrigeratorModel>> GetAltexRefrigerator()
+        public async Task<List<WashMachineModel>> GetMediaGalaxyWashMachine()
         {
-            var resultProducts = await _context.MediaGalaxyRefrigerator
-                .Select(r => new RefrigeratorModel
+            var resultProducts = await _context.MediaGalaxyWashMachine
+                .Select(r => new WashMachineModel
                 {
                     Id = r.Id,
                     Name = r.Name,

@@ -1,21 +1,22 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using e_Scrap.Models.Common.GasCooker;
+using Microsoft.EntityFrameworkCore;
 using Models.Common.Refrigerator;
 
-namespace e.Services.Altex
+namespace e_Scrap.Services.MediaGalaxy
 {
-    public class AltexRefrigeratorService
+    public class MediaGalaxyGasCookerService
     {
         private readonly AppSettingsDbContext _context;
 
-        public AltexRefrigeratorService(AppSettingsDbContext context)
+        public MediaGalaxyGasCookerService(AppSettingsDbContext context)
         {
             _context = context;
         }
 
-        public async Task<List<RefrigeratorModel>> GetAltexRefrigerator()
+        public async Task<List<GasCookerModel>> GetMediaGalaxyGasCooker()
         {
-            var resultProducts = await _context.MediaGalaxyRefrigerator
-                .Select(r => new RefrigeratorModel
+            var resultProducts = await _context.MediaGalaxyGasCooker
+                .Select(r => new GasCookerModel
                 {
                     Id = r.Id,
                     Name = r.Name,
