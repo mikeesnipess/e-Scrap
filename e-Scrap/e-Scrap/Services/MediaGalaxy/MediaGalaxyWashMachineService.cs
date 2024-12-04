@@ -4,11 +4,11 @@ using Models.Common.Refrigerator;
 
 namespace eScrap.Services.MediaGalaxy
 {
-    public class MediaGalaxyWashMachineService
+    public class MediaGalaxyWashMachineService : IMediaGalaxyWashMachineService
     {
-        private readonly AppSettingsDbContext _context;
+        private readonly IAppSettingsDbContext _context;
 
-        public MediaGalaxyWashMachineService(AppSettingsDbContext context)
+        public MediaGalaxyWashMachineService(IAppSettingsDbContext context)
         {
             _context = context;
         }

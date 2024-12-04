@@ -1,11 +1,13 @@
-﻿using e_Scrap.Models.Common.GasCooker;
+﻿using e;
+using e_Scrap.Models.Common.GasCooker;
+using eScrap.Services.eMag;
 using Microsoft.EntityFrameworkCore;
 
-public class eMagGasCookerService
+public class eMagGasCookerService : IEmagGasCookerService
 {
-    private readonly AppSettingsDbContext _context;
+    private readonly IAppSettingsDbContext _context;
 
-    public eMagGasCookerService(AppSettingsDbContext context)
+    public eMagGasCookerService(IAppSettingsDbContext context)
     {
         _context = context;
     }

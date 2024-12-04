@@ -1,13 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using eScrap.Services.Dedeman;
+using Microsoft.EntityFrameworkCore;
 using Models.Common.Refrigerator;
 
 namespace e.Services.Altex
 {
-    public class DedemanRefrigeratorService
+    public class DedemanRefrigeratorService : IDedemanRefrigeratorService
     {
-        private readonly AppSettingsDbContext _context;
+        private readonly IAppSettingsDbContext _context;
 
-        public DedemanRefrigeratorService(AppSettingsDbContext context)
+        public DedemanRefrigeratorService(IAppSettingsDbContext context)
         {
             _context = context;
         }

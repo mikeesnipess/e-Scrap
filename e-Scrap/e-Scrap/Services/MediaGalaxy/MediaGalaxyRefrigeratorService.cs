@@ -1,13 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using eScrap.Services.MediaGalaxy;
+using Microsoft.EntityFrameworkCore;
 using Models.Common.Refrigerator;
 
 namespace e_Scrap.Services.MediaGalaxy
 {
-    public class MediaGalaxyRefrigeratorService
+    public class MediaGalaxyRefrigeratorService : IMediaGalaxyRefrigeratorService
     {
-        private readonly AppSettingsDbContext _context;
+        private readonly IAppSettingsDbContext _context;
 
-        public MediaGalaxyRefrigeratorService(AppSettingsDbContext context)
+        public MediaGalaxyRefrigeratorService(IAppSettingsDbContext context)
         {
             _context = context;
         }

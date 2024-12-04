@@ -8,10 +8,10 @@ namespace Controllers.Altex
     [Route("[controller]")]
     public class AltexRefrigeratorController : ControllerBase
     {
-        private readonly AltexRefrigeratorService _scrapService;
-        private readonly AppSettingsDbContext _context;
+        private readonly IAltexRefrigeratorService _scrapService;
+        private readonly IAppSettingsDbContext _context;
 
-        public AltexRefrigeratorController(AltexRefrigeratorService scrapService, AppSettingsDbContext context)
+        public AltexRefrigeratorController(IAltexRefrigeratorService scrapService, IAppSettingsDbContext context)
         {
             _scrapService = scrapService;
             _context = context;

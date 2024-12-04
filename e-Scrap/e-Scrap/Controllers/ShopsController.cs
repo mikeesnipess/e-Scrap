@@ -1,4 +1,5 @@
 ﻿using e_Scrap.Models;
+using eScrap.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace e_Scrap.Controllers
@@ -7,9 +8,9 @@ namespace e_Scrap.Controllers
     [Route("[controller]")]
     public class ShopsController : Controller
     {
-        private readonly AppSettingsDbContext _context;
-        private readonly ShopsService _shopsService;
-        public ShopsController(AppSettingsDbContext context, ShopsService shopsService)
+        private readonly IAppSettingsDbContext _context;
+        private readonly IShopService _shopsService;
+        public ShopsController(IAppSettingsDbContext context, IShopService shopsService)
         {
             _context = context;
             _shopsService = shopsService;

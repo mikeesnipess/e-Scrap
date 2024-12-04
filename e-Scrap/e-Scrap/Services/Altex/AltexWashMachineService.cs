@@ -1,13 +1,14 @@
 ﻿using e_crap.Models.Common.WashMachine;
+using eScrap.Services.Altex;
 using Microsoft.EntityFrameworkCore;
 
 namespace e_Scrap.Services.Altex
 {
-    public class AltexWashMachineService
+    public class AltexWashMachineService : IAltexWashMachineService
     {
-        private readonly AppSettingsDbContext _context;
+        private readonly IAppSettingsDbContext _context;
 
-        public AltexWashMachineService(AppSettingsDbContext context)
+        public AltexWashMachineService(IAppSettingsDbContext context)
         {
             _context = context;
         }

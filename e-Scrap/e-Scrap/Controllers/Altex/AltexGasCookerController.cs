@@ -1,14 +1,15 @@
 ﻿using e_Scrap.Models.Common.GasCooker;
+using eScrap.Services.Altex;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("[controller]")]
 public class AltexGasCookerController : ControllerBase
 {
-    private readonly AltexGasCookerService _scrapService;
-    private readonly AppSettingsDbContext _context;
+    private readonly IAltexGasCookerService _scrapService;
+    private readonly IAppSettingsDbContext _context;
 
-    public AltexGasCookerController(AppSettingsDbContext context, AltexGasCookerService scrapService)
+    public AltexGasCookerController(IAppSettingsDbContext context, IAltexGasCookerService scrapService)
     {
         _context = context;
         _scrapService = scrapService;

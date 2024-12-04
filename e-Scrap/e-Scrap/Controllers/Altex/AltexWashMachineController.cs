@@ -1,5 +1,6 @@
 ﻿using e_crap.Models.Common.WashMachine;
 using e_Scrap.Services.Altex;
+using eScrap.Services.Altex;
 using Microsoft.AspNetCore.Mvc;
 
 namespace e_Scrap.Controllers.Altex
@@ -8,9 +9,9 @@ namespace e_Scrap.Controllers.Altex
     [Route("[controller]")]
     public class AltexWashMachineController : ControllerBase
     {
-        private readonly AltexWashMachineService _scrapService;
-        private readonly AppSettingsDbContext _context;
-        public AltexWashMachineController(AltexWashMachineService scrapService, AppSettingsDbContext context)
+        private readonly IAltexWashMachineService _scrapService;
+        private readonly IAppSettingsDbContext _context;
+        public AltexWashMachineController(IAltexWashMachineService scrapService, IAppSettingsDbContext context)
         {
             _scrapService = scrapService;
             _context = context;

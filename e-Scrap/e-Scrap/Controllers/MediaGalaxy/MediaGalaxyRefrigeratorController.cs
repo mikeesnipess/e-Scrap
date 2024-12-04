@@ -1,5 +1,6 @@
 ﻿using e.Services.Altex;
 using e_Scrap.Services.MediaGalaxy;
+using eScrap.Services.MediaGalaxy;
 using Microsoft.AspNetCore.Mvc;
 using Models.Common.Refrigerator;
 
@@ -10,10 +11,10 @@ namespace eScrap.Controllers.MediaGalaxy
     [Route("[controller]")]
     public class MediaGalaxyRefrigeratorController : ControllerBase
     {
-        private readonly MediaGalaxyRefrigeratorService _scrapService;
-        private readonly AppSettingsDbContext _context;
+        private readonly IMediaGalaxyRefrigeratorService _scrapService;
+        private readonly IAppSettingsDbContext _context;
 
-        public MediaGalaxyRefrigeratorController(MediaGalaxyRefrigeratorService scrapService, AppSettingsDbContext context)
+        public MediaGalaxyRefrigeratorController(IMediaGalaxyRefrigeratorService scrapService, IAppSettingsDbContext context)
         {
             _scrapService = scrapService;
             _context = context;
