@@ -1,5 +1,6 @@
 ﻿using e_Scrap.Models.Common.GasCooker;
 using e_Scrap.Services.MediaGalaxy;
+using eScrap.Services.MediaGalaxy;
 using Microsoft.AspNetCore.Mvc;
 
 namespace e_Scrap.Controllers.MediaGalaxy
@@ -8,10 +9,10 @@ namespace e_Scrap.Controllers.MediaGalaxy
     [Route("[controller]")]
     public class MediaGalaxyGasCookerController : ControllerBase
     {
-        private readonly MediaGalaxyGasCookerService _scrapService;
-        private readonly AppSettingsDbContext _context;
+        private readonly IMediaGalaxyGasCookerService _scrapService;
+        private readonly IAppSettingsDbContext _context;
 
-        public MediaGalaxyGasCookerController(MediaGalaxyGasCookerService scrapService, AppSettingsDbContext context)
+        public MediaGalaxyGasCookerController(IMediaGalaxyGasCookerService scrapService, IAppSettingsDbContext context)
         {
             _scrapService = scrapService;
             _context = context;

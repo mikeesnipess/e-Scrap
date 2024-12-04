@@ -1,4 +1,5 @@
 ﻿using e.Services.Altex;
+using eScrap.Services.Dedeman;
 using Microsoft.AspNetCore.Mvc;
 using Models.Common.Refrigerator;
 
@@ -8,10 +9,10 @@ namespace e_Scrap.Controllers.Dedeman
     [Route("[controller]")]
     public class DedemanRefrigeratorController : ControllerBase
     {
-        private readonly DedemanRefrigeratorService _scrapService;
-        private readonly AppSettingsDbContext _context;
+        private readonly IDedemanRefrigeratorService _scrapService;
+        private readonly IAppSettingsDbContext _context;
 
-        public DedemanRefrigeratorController(DedemanRefrigeratorService scrapService, AppSettingsDbContext context)
+        public DedemanRefrigeratorController(IDedemanRefrigeratorService scrapService, IAppSettingsDbContext context)
         {
             _scrapService = scrapService;
             _context = context;

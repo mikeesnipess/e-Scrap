@@ -1,20 +1,21 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Models.Common.Refrigerator;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace e.Services.Altex
 {
-    public class AltexRefrigeratorService
+    public class AltexRefrigeratorService : IAltexRefrigeratorService
     {
-        private readonly AppSettingsDbContext _context;
-
-        public AltexRefrigeratorService(AppSettingsDbContext context)
+        private readonly IAppSettingsDbContext _context;
+        public AltexRefrigeratorService(IAppSettingsDbContext context)
         {
             _context = context;
         }
 
         public async Task<List<RefrigeratorModel>> GetAltexRefrigerator()
         {
-            var resultProducts = await _context.MediaGalaxyRefrigerator
+            var resultProducts = await _context.AltexRefrigerator
                 .Select(r => new RefrigeratorModel
                 {
                     Id = r.Id,
@@ -29,7 +30,6 @@ namespace e.Services.Altex
                     ProductType = r.ProductType,
                     ImageSmallUrl = r.ImageSmallUrl,
                     BrandName = r.BrandName,
-
                 })
                 .ToListAsync();
 

@@ -10,10 +10,10 @@ namespace eScrap.Controllers.MediaGalaxy
     [Route("[controller]")]
     public class MediaGalaxyWashMachineController : ControllerBase
     {
-        private readonly MediaGalaxyWashMachineService _scrapService;
-        private readonly AppSettingsDbContext _context;
+        private readonly IMediaGalaxyWashMachineService _scrapService;
+        private readonly IAppSettingsDbContext _context;
 
-        public MediaGalaxyWashMachineController(MediaGalaxyWashMachineService scrapService, AppSettingsDbContext context)
+        public MediaGalaxyWashMachineController(IMediaGalaxyWashMachineService scrapService, IAppSettingsDbContext context)
         {
             _scrapService = scrapService;
             _context = context;

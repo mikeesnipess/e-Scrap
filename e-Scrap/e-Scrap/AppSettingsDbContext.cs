@@ -1,5 +1,4 @@
-﻿using e;
-using e.Scrap.Entities.eMag;
+﻿using e.Scrap.Entities.eMag;
 using e_Scrap.Entities;
 using e_Scrap.Entities.Altex;
 using e_Scrap.Entities.Dedeman;
@@ -9,7 +8,7 @@ using Entities.Altex;
 using eScrap.Entities.MediaGalaxy;
 using Microsoft.EntityFrameworkCore;
 
-public class AppSettingsDbContext : DbContext
+public class AppSettingsDbContext : DbContext, IAppSettingsDbContext
 {
     public DbSet<AltexRefrigerator> AltexRefrigerator { get; private set; }
     public DbSet<AltexGasCooker> AltexGasCooker { get; private set; }
@@ -20,17 +19,18 @@ public class AppSettingsDbContext : DbContext
     public DbSet<DedemanRefrigerator> DedemanRefrigerator { get; private set; }
     public DbSet<MediaGalaxyRefrigerator> MediaGalaxyRefrigerator { get; private set; }
     public DbSet<MediaGalaxyGasCooker> MediaGalaxyGasCooker { get; private set; }
-    public DbSet<MediaGalaxyWashMachine> MediaGalaxyWashMachine { get; private set; }
+    public DbSet<MediaGalaxyWashMachine> MediaGalaxyWashMachine { get; private set;}
     public DbSet<Shops> Shops { get; private set; }
+
 
     public AppSettingsDbContext() : base()
     {
 
     }
 
-    public AppSettingsDbContext(DbContextOptions<AppSettingsDbContext> options) : base(options) 
+    public AppSettingsDbContext(DbContextOptions<AppSettingsDbContext> options) : base(options)
     {
-        
+
     }
 }
 

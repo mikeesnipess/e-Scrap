@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using eScrap.Services.eMag;
+using Microsoft.EntityFrameworkCore;
 using Models.Common.Refrigerator;
 
-public class eMagRefrigeratorService
+public class eMagRefrigeratorService : IEmagRefrigeratorService
 {
-    private readonly AppSettingsDbContext _context;
+    private readonly IAppSettingsDbContext _context;
 
-    public eMagRefrigeratorService(AppSettingsDbContext context)
+    public eMagRefrigeratorService(IAppSettingsDbContext context)
     {
         _context = context;
     }

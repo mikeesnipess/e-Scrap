@@ -1,14 +1,16 @@
-﻿using e_Scrap.Models.Common.GasCooker;
+﻿using e;
+using e_Scrap.Models.Common.GasCooker;
+using eScrap.Services.MediaGalaxy;
 using Microsoft.EntityFrameworkCore;
 using Models.Common.Refrigerator;
 
 namespace e_Scrap.Services.MediaGalaxy
 {
-    public class MediaGalaxyGasCookerService
+    public class MediaGalaxyGasCookerService : IMediaGalaxyGasCookerService
     {
-        private readonly AppSettingsDbContext _context;
+        private readonly IAppSettingsDbContext _context;
 
-        public MediaGalaxyGasCookerService(AppSettingsDbContext context)
+        public MediaGalaxyGasCookerService(IAppSettingsDbContext context)
         {
             _context = context;
         }

@@ -4,6 +4,10 @@ using e_Scrap.Components;
 using e_Scrap.Mapping;
 using e_Scrap.Services.Altex;
 using e_Scrap.Services.MediaGalaxy;
+using eScrap.Services;
+using eScrap.Services.Altex;
+using eScrap.Services.Dedeman;
+using eScrap.Services.eMag;
 using eScrap.Services.MediaGalaxy;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,17 +29,17 @@ builder.Services.AddHttpClient();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddHttpClient<UltraMdRefrigeratorService>();
 builder.Services.AddHttpClient<AltexRefrigeratorService>();
-builder.Services.AddScoped<AltexRefrigeratorService>();
-builder.Services.AddScoped<AltexGasCookerService>();
-builder.Services.AddScoped<AltexWashMachineService>();
-builder.Services.AddScoped<eMagGasCookerService>();
-builder.Services.AddScoped<eMagRefrigeratorService>();
-builder.Services.AddScoped<eMagWashMachineService>();
-builder.Services.AddScoped<DedemanRefrigeratorService>();
-builder.Services.AddScoped<MediaGalaxyRefrigeratorService>();
-builder.Services.AddScoped<MediaGalaxyGasCookerService>();
-builder.Services.AddScoped<MediaGalaxyWashMachineService>();
-builder.Services.AddScoped<ShopsService>();
+builder.Services.AddScoped<IAltexRefrigeratorService,AltexRefrigeratorService>();
+builder.Services.AddScoped<IAltexGasCookerService,AltexGasCookerService>();
+builder.Services.AddScoped<IAltexWashMachineService,AltexWashMachineService>();
+builder.Services.AddScoped<IEmagGasCookerService,eMagGasCookerService>();
+builder.Services.AddScoped<IEmagRefrigeratorService,eMagRefrigeratorService>();
+builder.Services.AddScoped<IEmagWashMachineService,eMagWashMachineService>();
+builder.Services.AddScoped<IDedemanRefrigeratorService,DedemanRefrigeratorService>();
+builder.Services.AddScoped<IMediaGalaxyRefrigeratorService,MediaGalaxyRefrigeratorService>();
+builder.Services.AddScoped<IMediaGalaxyGasCookerService,MediaGalaxyGasCookerService>();
+builder.Services.AddScoped<IMediaGalaxyWashMachineService,MediaGalaxyWashMachineService>();
+builder.Services.AddScoped<IShopService,ShopsService>();
 
 // Add services to the container
 builder.Services.AddRazorComponents()
@@ -44,10 +48,12 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddControllers();
 
-builder.Services.AddDbContext<AppSettingsDbContext>(options =>
+builder.Services.AddDbContext<IAppSettingsDbContext,AppSettingsDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConection"));
 });
+
+//builder.Services.AddScoped<IAppSettingsDbContext>(provider => provider.GetRequiredService<AppSettingsDbContext>());
 
 // Add HttpClient with BaseAddress
 builder.Services.AddHttpClient("API", client =>

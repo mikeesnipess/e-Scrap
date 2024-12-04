@@ -1,5 +1,6 @@
 ﻿using e_crap.Models.Common.WashMachine;
 using e_crap.Services.eMag;
+using eScrap.Services.eMag;
 using Microsoft.AspNetCore.Mvc;
 
 namespace e_Scrap.Controllers.eMag
@@ -8,10 +9,10 @@ namespace e_Scrap.Controllers.eMag
     [Route("[controller]")]
     public class eMagWashMachineController : ControllerBase
     {
-        private readonly eMagWashMachineService _scrapService;
-        private readonly AppSettingsDbContext _context;
+        private readonly IEmagWashMachineService _scrapService;
+        private readonly IAppSettingsDbContext _context;
 
-        public eMagWashMachineController(eMagWashMachineService scrapService, AppSettingsDbContext context)
+        public eMagWashMachineController(IEmagWashMachineService scrapService, IAppSettingsDbContext context)
         {
             _scrapService = scrapService;
             _context = context;

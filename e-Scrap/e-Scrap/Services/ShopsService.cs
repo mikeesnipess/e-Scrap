@@ -1,10 +1,12 @@
-﻿using e_Scrap.Models;
+﻿using e;
+using e_Scrap.Models;
+using eScrap.Services;
 using Microsoft.EntityFrameworkCore;
 
-public class ShopsService
+public class ShopsService : IShopService
 {
-    private readonly AppSettingsDbContext _context;
-    public ShopsService(AppSettingsDbContext context)
+    private readonly IAppSettingsDbContext _context;
+    public ShopsService(IAppSettingsDbContext context)
     {
         _context = context;
     }

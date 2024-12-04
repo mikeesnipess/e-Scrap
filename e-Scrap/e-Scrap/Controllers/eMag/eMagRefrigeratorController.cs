@@ -1,14 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using eScrap.Services.eMag;
+using Microsoft.AspNetCore.Mvc;
 using Models.Common.Refrigerator;
 
 [ApiController]
 [Route("[controller]")]
 public class eMagRefrigeratorController : ControllerBase
 {
-    private readonly eMagRefrigeratorService _scrapService;
-    private readonly AppSettingsDbContext _context;
+    private readonly IEmagRefrigeratorService _scrapService;
+    private readonly IAppSettingsDbContext _context;
 
-    public eMagRefrigeratorController(AppSettingsDbContext context, eMagRefrigeratorService scrapService)
+    public eMagRefrigeratorController(IAppSettingsDbContext context, IEmagRefrigeratorService scrapService)
     {
         _context = context;
         _scrapService = scrapService;

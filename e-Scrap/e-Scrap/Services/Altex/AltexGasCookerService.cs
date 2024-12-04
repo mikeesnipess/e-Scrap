@@ -1,11 +1,12 @@
 ﻿using e_Scrap.Models.Common.GasCooker;
+using eScrap.Services.Altex;
 using Microsoft.EntityFrameworkCore;
 
-public class AltexGasCookerService
+public class AltexGasCookerService : IAltexGasCookerService
 {
-    private readonly AppSettingsDbContext _context;
+    private readonly IAppSettingsDbContext _context;
 
-    public AltexGasCookerService(AppSettingsDbContext context)
+    public AltexGasCookerService(IAppSettingsDbContext context)
     {
         _context = context;
     }

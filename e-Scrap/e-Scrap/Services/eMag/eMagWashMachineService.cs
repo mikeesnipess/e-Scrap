@@ -1,12 +1,13 @@
 ﻿using e_crap.Models.Common.WashMachine;
+using eScrap.Services.eMag;
 using Microsoft.EntityFrameworkCore;
 
 namespace e_crap.Services.eMag
 {
-    public class eMagWashMachineService
+    public class eMagWashMachineService : IEmagWashMachineService
     {
-        private readonly AppSettingsDbContext _context;
-        public eMagWashMachineService(AppSettingsDbContext context)
+        private readonly IAppSettingsDbContext _context;
+        public eMagWashMachineService(IAppSettingsDbContext context)
         {
             _context = context;
         }
