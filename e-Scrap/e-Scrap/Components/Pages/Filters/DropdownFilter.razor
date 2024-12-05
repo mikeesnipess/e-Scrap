@@ -1,33 +1,27 @@
-﻿@inject IJSRuntime JS
-@rendermode InteractiveServer
+﻿@typeparam T
 
 <div>
-    <label for="Products">Brand name filter</label>
-    <select id="Products" @onchange="HandleBrandSelectionChanged">
+    Set average price from Minimum:
+    <input type="number" id="fromPrice" min="1" @bind-value="MinPrice" />
+    to Maximum:
+    <input type="number" id="toPrice" min="1" @bind-value="MaxPrice" />
+    <input type="submit" value="Confirm" @onclick="ApplyPriceFilter" />
+    <br />
+    <select @onchange="e => OnSelectedBrandName.InvokeAsync(e.Value.ToString())">
         <option value="">All Brands</option>
-        @foreach (var product in BrandNameProducts.OrderBy(x => x))
+        @foreach (var brand in BrandNameProducts)
         {
-            <option value="@product">@product</option>
+            <option value="@brand">@brand</option>
         }
     </select>
-    <br />
-    <label for="Shops">Shop filter</label>
-    <select id="Shops" @onchange="HandleShopSelectionChanged">
+
+    <select @onchange="e => OnSelectedShopName.InvokeAsync(e.Value.ToString())">
         <option value="">All Shops</option>
-        @foreach (var shop in ShopNames.OrderBy(x => x))
+        @foreach (var shop in ShopNames)
         {
             <option value="@shop">@shop</option>
         }
     </select>
-    <br />
-    <label for="priceAverage">
-        Set average price from Minimum:
-        <input type="number" id="fromPrice" min="1" @bind-value="MinPrice" />
-        to Maximum:
-        <input type="number" id="toPrice" min="1" @bind-value="MaxPrice" />
-        <input type="submit" value="Confirm" @onclick="ApplyPriceFilter" />
-    </label>
-    <br />
     <label for="isDiscount">
         Show only Discount?
         <input type="checkbox" id="verifyActivity" @bind="IsOnlyDiscount" @bind:event="onchange" />
@@ -36,16 +30,16 @@
 
 @code {
     [Parameter]
-    public List<string> BrandNameProducts { get; set; }
+    public List<string> BrandNameProducts { get; set; } = new();
 
     [Parameter]
-    public List<string> ShopNames { get; set; } 
+    public List<string> ShopNames { get; set; } = new();
 
     [Parameter]
     public EventCallback<string> OnSelectedBrandName { get; set; }
 
     [Parameter]
-    public EventCallback<string> OnSelectedShopName { get; set; } 
+    public EventCallback<string> OnSelectedShopName { get; set; }
 
     [Parameter]
     public EventCallback<int?> OnMinPriceChanged { get; set; }
@@ -56,9 +50,38 @@
     [Parameter]
     public EventCallback<bool> IsOnlyDiscountActive { get; set; }
 
+    private int? _minPrice;
+    private int? _maxPrice;
+    private bool _isOnlyDiscount;
     private int? MinPrice { get; set; }
     private int? MaxPrice { get; set; }
-    private bool _isOnlyDiscount;
+
+    // public int? MinPrice
+    // {
+    //     get => _minPrice;
+    //     set
+    //     {
+    //         if (_minPrice != value)
+    //         {
+    //             _minPrice = value;
+    //             OnMinPriceChanged.InvokeAsync(value);
+    //         }
+    //     }
+    // }
+
+    // public int? MaxPrice
+    // {
+    //     get => _maxPrice;
+    //     set
+    //     {
+    //         if (_maxPrice != value)
+    //         {
+    //             _maxPrice = value;
+    //             OnMaxPriceChanged.InvokeAsync(value);
+    //         }
+    //     }
+    // }
+
     private bool IsOnlyDiscount
     {
         get => _isOnlyDiscount;
@@ -95,32 +118,6 @@
         await IsOnlyDiscountActive.InvokeAsync(IsOnlyDiscount);
     }
 
-    public class ProductFilter<T>
-    {
-        public IEnumerable<T> FilterByProperty(IEnumerable<T> products, Func<T, string> propertySelector, string selectedValue)
-        {
-            if (string.IsNullOrEmpty(selectedValue))
-                return products;
-
-            return products.Where(p => propertySelector(p).Equals(selectedValue, StringComparison.OrdinalIgnoreCase));
-        }
-
-        public IEnumerable<T> FilterByPriceRange(IEnumerable<T> products, Func<T, decimal> priceSelector, decimal? minPrice, decimal? maxPrice)
-        {
-            return products.Where(p =>
-                (!minPrice.HasValue || priceSelector(p) >= minPrice.Value) &&
-                (!maxPrice.HasValue || priceSelector(p) <= maxPrice.Value));
-        }
-
-        public IEnumerable<T> FilterByCondition(IEnumerable<T> products, Func<T, bool> condition)
-        {
-            return products.Where(condition);
-        }
-
-        public IEnumerable<T> SortProducts(IEnumerable<T> products, Func<T, object> sortKeySelector, bool descending = false)
-        {
-            return descending ? products.OrderByDescending(sortKeySelector) : products.OrderBy(sortKeySelector);
-        }
-    }
+    
 
 }
