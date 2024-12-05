@@ -3,11 +3,20 @@
 
 <div>
     <label for="Products">Brand name filter</label>
-    <select id="Products" @onchange="HandleSelectionChanged">
+    <select id="Products" @onchange="HandleBrandSelectionChanged">
         <option value="">All Brands</option>
         @foreach (var product in BrandNameProducts.OrderBy(x => x))
         {
             <option value="@product">@product</option>
+        }
+    </select>
+    <br />
+    <label for="Shops">Shop filter</label>
+    <select id="Shops" @onchange="HandleShopSelectionChanged">
+        <option value="">All Shops</option>
+        @foreach (var shop in ShopNames.OrderBy(x => x))
+        {
+            <option value="@shop">@shop</option>
         }
     </select>
     <br />
@@ -30,7 +39,13 @@
     public List<string> BrandNameProducts { get; set; }
 
     [Parameter]
+    public List<string> ShopNames { get; set; } 
+
+    [Parameter]
     public EventCallback<string> OnSelectedBrandName { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnSelectedShopName { get; set; } 
 
     [Parameter]
     public EventCallback<int?> OnMinPriceChanged { get; set; }
@@ -57,10 +72,16 @@
         }
     }
 
-    private async Task HandleSelectionChanged(ChangeEventArgs e)
+    private async Task HandleBrandSelectionChanged(ChangeEventArgs e)
     {
         var selectedValue = e.Value?.ToString();
         await OnSelectedBrandName.InvokeAsync(selectedValue);
+    }
+
+    private async Task HandleShopSelectionChanged(ChangeEventArgs e)
+    {
+        var selectedValue = e.Value?.ToString();
+        await OnSelectedShopName.InvokeAsync(selectedValue);
     }
 
     private async Task ApplyPriceFilter()
@@ -73,4 +94,33 @@
     {
         await IsOnlyDiscountActive.InvokeAsync(IsOnlyDiscount);
     }
+
+    public class ProductFilter<T>
+    {
+        public IEnumerable<T> FilterByProperty(IEnumerable<T> products, Func<T, string> propertySelector, string selectedValue)
+        {
+            if (string.IsNullOrEmpty(selectedValue))
+                return products;
+
+            return products.Where(p => propertySelector(p).Equals(selectedValue, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public IEnumerable<T> FilterByPriceRange(IEnumerable<T> products, Func<T, decimal> priceSelector, decimal? minPrice, decimal? maxPrice)
+        {
+            return products.Where(p =>
+                (!minPrice.HasValue || priceSelector(p) >= minPrice.Value) &&
+                (!maxPrice.HasValue || priceSelector(p) <= maxPrice.Value));
+        }
+
+        public IEnumerable<T> FilterByCondition(IEnumerable<T> products, Func<T, bool> condition)
+        {
+            return products.Where(condition);
+        }
+
+        public IEnumerable<T> SortProducts(IEnumerable<T> products, Func<T, object> sortKeySelector, bool descending = false)
+        {
+            return descending ? products.OrderByDescending(sortKeySelector) : products.OrderBy(sortKeySelector);
+        }
+    }
+
 }

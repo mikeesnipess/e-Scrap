@@ -4,6 +4,7 @@
 @using e_Scrap.Models
 @using e_Scrap.Models.Common
 @using global::Models.Common.Refrigerator
+@using static e_Scrap.Components.Pages.Filters.DropdownFilter
 @inject HttpClient Http
 @inject IHttpClientFactory HttpClientFactory
 @inject IMapper mapper;
@@ -19,7 +20,9 @@
 else if (RefrigeratorProducts != null && RefrigeratorProducts.Count > 0)
 {
     <DropdownFilter BrandNameProducts="@RefrigeratorProducts.Select(p => p.BrandName.ToUpper()).Distinct().ToList()"
+                    ShopNames="@RefrigeratorProducts.Select(s => GetShopNameFromId( s.ShopId)).Distinct().ToList()"
                     OnSelectedBrandName="FilterBrandNameRefrigeratorProducts"
+                    OnSelectedShopName="FilterShopNameRefrigeratorProducts"
                     OnMinPriceChanged="FilterByMinPrice"
                     OnMaxPriceChanged="FilterByMaxPrice"
                     IsOnlyDiscountActive="FilterByDiscountPercentage" />
@@ -28,7 +31,7 @@ else if (RefrigeratorProducts != null && RefrigeratorProducts.Count > 0)
         {
             @foreach (var product in FilteredRefrigerators)
             {
-                var shopName = GetShopName(shopsModel, product.ShopId);
+                var shopName = GetShopNameFromId(product.ShopId);
 
                 <div class="product-card">
                     <h5>@product.Name</h5>
@@ -67,10 +70,12 @@ else
 
 @code {
     private bool loading = true;
+    private readonly ProductFilter<RefrigeratorModel> _productFilter = new();
     private List<RefrigeratorModel> RefrigeratorProducts = new();
     private List<RefrigeratorModel> FilteredRefrigerators = new();
     private List<ShopsModel> shopsModel = new();
     private string SelectedBrand { get; set; }
+    private string SelectedShop { get; set; }
     private int? MinPriceFilter { get; set; }
     private int? MaxPriceFilter { get; set; }
     private bool IsDiscountView { get; set; }
@@ -92,10 +97,16 @@ else
     }
 
     #region ShopsAPI
-    protected string GetShopName(List<ShopsModel> shopsModels, Guid shopId)
+    protected string GetShopNameFromId(Guid shopId)
     {
         return shopsModel.FirstOrDefault(s => s.Id == shopId)?.Name ?? "Unknown Shop";
     }
+
+    protected Guid GetShopIdFromName(string name)
+    {
+        return shopsModel.FirstOrDefault(s => s.Name == name)?.Id ?? Guid.Empty;
+    }
+
 
     protected async Task<List<RefrigeratorModel>> GetAltexRefrigeratorProductsAsync(HttpClient client)
     {
@@ -162,6 +173,11 @@ else
         ApplyPriceFilter();
     }
 
+    private void FilterShopNameRefrigeratorProducts(string selectedShop)
+    {
+        SelectedShop = selectedShop;
+        ApplyPriceFilter();
+    }
 
     private void FilterByMinPrice(int? minPrice)
     {
@@ -183,39 +199,25 @@ else
 
     private void ApplyPriceFilter()
     {
-        var filteredByBrand = string.IsNullOrEmpty(SelectedBrand)
-            ? RefrigeratorProducts
-            : RefrigeratorProducts.Where(p => p.BrandName.Equals(SelectedBrand, StringComparison.OrdinalIgnoreCase));
+        IEnumerable<RefrigeratorModel> filteredProducts = RefrigeratorProducts;
 
-        var filteredByPrice = filteredByBrand.Where(p =>
-            (!MinPriceFilter.HasValue || p.StandardPrice >= MinPriceFilter.Value) &&
-            (!MaxPriceFilter.HasValue || p.StandardPrice <= MaxPriceFilter.Value));
+        filteredProducts = _productFilter.FilterByProperty(filteredProducts, p => p.BrandName, SelectedBrand);
 
-        FilteredRefrigerators = filteredByPrice
-            .Where(p => !IsDiscountView || p.DiscountPercentage > 0)
-            .OrderByDescending(p =>
-                IsDiscountView
-                    ? p.DiscountPercentage
-                    : p.DiscountPercentage > 0 ? p.DiscountPrice : p.StandardPrice)
-            .ToList();
+        filteredProducts = _productFilter.FilterByProperty(filteredProducts, p => GetShopNameFromId(p.ShopId), SelectedShop);
+
+        filteredProducts = _productFilter.FilterByPriceRange(filteredProducts, p => p.StandardPrice, MinPriceFilter, MaxPriceFilter);
+
+        if (IsDiscountView)
+        {
+            filteredProducts = _productFilter.FilterByCondition(filteredProducts, p => p.DiscountPercentage > 0);
+        }
+
+        FilteredRefrigerators = _productFilter.SortProducts(
+            filteredProducts,
+            p => IsDiscountView ? p.DiscountPercentage : (p.DiscountPercentage > 0 ? p.DiscountPrice : p.StandardPrice),
+            true).ToList();
 
         StateHasChanged();
-    }
-
-    private void FilterProducts<T>(IEnumerable<T> sourceProducts, string selectedValue, Func<T, string> propertySelector, out List<T> filteredProducts)
-    {
-        Console.WriteLine($"Filtering products by selected value: {selectedValue}");
-
-        if (string.IsNullOrEmpty(selectedValue))
-        {
-            filteredProducts = sourceProducts.ToList();
-        }
-        else
-        {
-            filteredProducts = sourceProducts
-                .Where(p => propertySelector(p).Equals(selectedValue, StringComparison.OrdinalIgnoreCase))
-                .ToList();
-        }
     }
     #endregion
 }
