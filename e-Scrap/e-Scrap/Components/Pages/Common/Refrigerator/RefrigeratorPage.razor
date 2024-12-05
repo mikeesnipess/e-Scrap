@@ -4,114 +4,38 @@
 @using e_Scrap.Models
 @using e_Scrap.Models.Common
 @using global::Models.Common.Refrigerator
-@using static e_Scrap.Components.Pages.Filters.DropdownFilter
 @inject HttpClient Http
 @inject IHttpClientFactory HttpClientFactory
 @inject IMapper mapper;
 @inject IJSRuntime JS
+@inject ProductPage<RefrigeratorModel> _getData;
 @rendermode InteractiveServer
 
-<h3>Scraped Refrigerator Products</h3>
-
-@if (loading)
-{
-    <p>Loading products, please wait...</p>
-}
-else if (RefrigeratorProducts != null && RefrigeratorProducts.Count > 0)
-{
-    <DropdownFilter BrandNameProducts="@RefrigeratorProducts.Select(p => p.BrandName.ToUpper()).Distinct().ToList()"
-                    ShopNames="@RefrigeratorProducts.Select(s => GetShopNameFromId( s.ShopId)).Distinct().ToList()"
-                    OnSelectedBrandName="FilterBrandNameRefrigeratorProducts"
-                    OnSelectedShopName="FilterShopNameRefrigeratorProducts"
-                    OnMinPriceChanged="FilterByMinPrice"
-                    OnMaxPriceChanged="FilterByMaxPrice"
-                    IsOnlyDiscountActive="FilterByDiscountPercentage" />
-    <div class="product-list">
-        @if (FilteredRefrigerators.Count != 0)
-        {
-            @foreach (var product in FilteredRefrigerators)
-            {
-                var shopName = GetShopNameFromId(product.ShopId);
-
-                <div class="product-card">
-                    <h5>@product.Name</h5>
-                    <img src="@product.ImageSmallUrl" alt="Lipseste imaginea" width="200" height="200" />
-                    <p><strong>Price:</strong> @product.StandardPrice.ToString("C")</p>
-
-                    @if (product.DiscountPercentage > 0)
-                    {
-                        <p style="color: red"><strong>Discount Price:</strong> @product.DiscountPrice.ToString("C")</p>
-                        <p style="color: red"><strong>Discount:</strong> @product.DiscountPercentage%</p>
-                    }
-                    else
-                    {
-                        <p><strong>Discount Price:</strong> @product.DiscountPrice.ToString("C")</p>
-                        <p><strong>Discount:</strong> @product.DiscountPercentage%</p>
-                    }
-
-                    <p><strong>Brand Name:</strong> @product.BrandName</p>
-                    <p><strong>Shop: </strong> @shopName</p>
-                    <p><strong>Description:</strong> @product.ProductDescription</p>
-                    <a href="@product.LinkUrl" target="_blank" rel="noopener noreferrer">View Product</a>
-                </div>
-            }
-        }
-        else
-        {
-            <p>Does not exist products in this range...</p>
-        }
-    </div>
-}
-
-else
-{
-    <p>No products found.</p>
-}
+<ProductPage TProduct="RefrigeratorModel" Products="@RefrigeratorProducts" />
 
 @code {
     private bool loading = true;
-    private readonly ProductFilter<RefrigeratorModel> _productFilter = new();
     private List<RefrigeratorModel> RefrigeratorProducts = new();
-    private List<RefrigeratorModel> FilteredRefrigerators = new();
-    private List<ShopsModel> shopsModel = new();
-    private string SelectedBrand { get; set; }
-    private string SelectedShop { get; set; }
-    private int? MinPriceFilter { get; set; }
-    private int? MaxPriceFilter { get; set; }
-    private bool IsDiscountView { get; set; }
+
 
     protected override async Task OnInitializedAsync()
     {
         loading = true;
         var client = HttpClientFactory.CreateClient("API");
-        var shops = await client.GetAsync("Shops/getShops");
-        shopsModel = await shops.Content.ReadFromJsonAsync<List<ShopsModel>>();
-        RefrigeratorProducts = await GetAltexRefrigeratorProductsAsync(client);
+        RefrigeratorProducts.AddRange(await GetAltexRefrigeratorProductsAsync(client));
         RefrigeratorProducts.AddRange(await GetEMagRefrigeratorProductsAsync(client));
         RefrigeratorProducts.AddRange(await GetDedemanRefrigeratorProductsAsync(client));
         RefrigeratorProducts.AddRange(await GetMediaGalaxyRefrigeratorProductsAsync(client));
 
-        FilteredRefrigerators = RefrigeratorProducts;
         loading = false;
         StateHasChanged();
     }
 
     #region ShopsAPI
-    protected string GetShopNameFromId(Guid shopId)
-    {
-        return shopsModel.FirstOrDefault(s => s.Id == shopId)?.Name ?? "Unknown Shop";
-    }
-
-    protected Guid GetShopIdFromName(string name)
-    {
-        return shopsModel.FirstOrDefault(s => s.Name == name)?.Id ?? Guid.Empty;
-    }
-
-
     protected async Task<List<RefrigeratorModel>> GetAltexRefrigeratorProductsAsync(HttpClient client)
     {
         var endpoint = "AltexRefrigerator/ScrapeRefrigeratorAltexProducts";
-        var products = await GetDataAsync<RefrigeratorModel>(client, endpoint);
+        var products = await _getData.GetDataAsync<RefrigeratorModel>(client, endpoint);
 
         return products;
     }
@@ -119,7 +43,7 @@ else
     protected async Task<List<RefrigeratorModel>> GetEMagRefrigeratorProductsAsync(HttpClient client)
     {
         var endpoint = "eMagRefrigerator/eMagScrapeRefrigeratorProducts";
-        var products = await GetDataAsync<RefrigeratorModel>(client, endpoint);
+        var products = await _getData.GetDataAsync<RefrigeratorModel>(client, endpoint);
 
         return products;
     }
@@ -127,7 +51,7 @@ else
     protected async Task<List<RefrigeratorModel>> GetDedemanRefrigeratorProductsAsync(HttpClient client)
     {
         var endpoint = "DedemanRefrigerator/ScrapeRefrigeratorDedemanProducts";
-        var products = await GetDataAsync<RefrigeratorModel>(client, endpoint);
+        var products = await _getData.GetDataAsync<RefrigeratorModel>(client, endpoint);
 
         return products;
     }
@@ -135,89 +59,9 @@ else
     protected async Task<List<RefrigeratorModel>> GetMediaGalaxyRefrigeratorProductsAsync(HttpClient client)
     {
         var endpoint = "MediaGalaxyRefrigerator/ScrapeRefrigeratorMediaGalaxyProducts";
-        var products = await GetDataAsync<RefrigeratorModel>(client, endpoint);
+        var products = await _getData.GetDataAsync<RefrigeratorModel>(client, endpoint);
 
         return products;
-    }
-    #endregion
-
-    protected async Task<List<T>> GetDataAsync<T>(HttpClient client, string endpoint) where T : class
-    {
-        try
-        {
-            var response = await client.GetAsync(endpoint);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var data = await response.Content.ReadFromJsonAsync<List<T>>();
-                return data ?? new List<T>();
-            }
-            else
-            {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Error: {response.StatusCode}, Content: {errorContent}");
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Exception occurred while fetching data: {ex.Message}");
-        }
-
-        return new List<T>();
-    }
-
-    #region Filters
-    private void FilterBrandNameRefrigeratorProducts(string selectedBrand)
-    {
-        SelectedBrand = selectedBrand;
-        ApplyPriceFilter();
-    }
-
-    private void FilterShopNameRefrigeratorProducts(string selectedShop)
-    {
-        SelectedShop = selectedShop;
-        ApplyPriceFilter();
-    }
-
-    private void FilterByMinPrice(int? minPrice)
-    {
-        MinPriceFilter = minPrice;
-        ApplyPriceFilter();
-    }
-
-    private void FilterByMaxPrice(int? maxPrice)
-    {
-        MaxPriceFilter = maxPrice;
-        ApplyPriceFilter();
-    }
-
-    private void FilterByDiscountPercentage(bool isDiscount)
-    {
-        IsDiscountView = isDiscount;
-        ApplyPriceFilter();
-    }
-
-    private void ApplyPriceFilter()
-    {
-        IEnumerable<RefrigeratorModel> filteredProducts = RefrigeratorProducts;
-
-        filteredProducts = _productFilter.FilterByProperty(filteredProducts, p => p.BrandName, SelectedBrand);
-
-        filteredProducts = _productFilter.FilterByProperty(filteredProducts, p => GetShopNameFromId(p.ShopId), SelectedShop);
-
-        filteredProducts = _productFilter.FilterByPriceRange(filteredProducts, p => p.StandardPrice, MinPriceFilter, MaxPriceFilter);
-
-        if (IsDiscountView)
-        {
-            filteredProducts = _productFilter.FilterByCondition(filteredProducts, p => p.DiscountPercentage > 0);
-        }
-
-        FilteredRefrigerators = _productFilter.SortProducts(
-            filteredProducts,
-            p => IsDiscountView ? p.DiscountPercentage : (p.DiscountPercentage > 0 ? p.DiscountPrice : p.StandardPrice),
-            true).ToList();
-
-        StateHasChanged();
     }
     #endregion
 }

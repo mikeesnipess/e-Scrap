@@ -1,6 +1,7 @@
 using e.Services.Altex;
 using e_crap.Services.eMag;
 using e_Scrap.Components;
+using e_Scrap.Components.Pages.Common;
 using e_Scrap.Mapping;
 using e_Scrap.Services.Altex;
 using e_Scrap.Services.MediaGalaxy;
@@ -40,6 +41,7 @@ builder.Services.AddScoped<IMediaGalaxyRefrigeratorService,MediaGalaxyRefrigerat
 builder.Services.AddScoped<IMediaGalaxyGasCookerService,MediaGalaxyGasCookerService>();
 builder.Services.AddScoped<IMediaGalaxyWashMachineService,MediaGalaxyWashMachineService>();
 builder.Services.AddScoped<IShopService,ShopsService>();
+builder.Services.AddTransient(typeof(ProductPage<>)); 
 
 // Add services to the container
 builder.Services.AddRazorComponents()

@@ -1,0 +1,219 @@
+﻿@using eScrap.Models.Common
+@using e_Scrap.Components.Pages.Filters
+@using e_Scrap.Models
+@inject IHttpClientFactory HttpClientFactory
+@typeparam TProduct where TProduct : ProductModel
+
+<h3>Scraped @typeof(TProduct).Name Products</h3>
+
+@if (loading)
+{
+    <p>Loading products, please wait...</p>
+}
+else if (Products != null && Products.Count > 0)
+{
+    <DropdownFilter T="TProduct"
+                    BrandNameProducts="@Products.Select(p => p.BrandName.ToUpper()).Distinct().ToList()"
+                    ShopNames="@Products.Select(p => GetShopNameFromId(p.ShopId)).Distinct().ToList()"
+                    OnSelectedBrandName="FilterByBrandName"
+                    OnSelectedShopName="FilterByShopName"
+                    OnMinPriceChanged="FilterByMinPrice"
+                    OnMaxPriceChanged="FilterByMaxPrice"
+                    IsOnlyDiscountActive="FilterByDiscount" />
+
+
+    <div class="product-list">
+        @if (FilteredProducts.Count > 0)
+        {
+            @foreach (var product in FilteredProducts)
+            {
+                var shopName = GetShopNameFromId(product.ShopId);
+
+                <div class="product-card">
+                    <h5>@product.Name</h5>
+                    <img src="@product.ImageSmallUrl" alt="Image missing" width="200" height="200" />
+                    <p><strong>Price:</strong> @product.StandardPrice.ToString("C")</p>
+
+                    @if (product.DiscountPercentage > 0)
+                    {
+                        <p style="color: red"><strong>Discount Price:</strong> @product.DiscountPrice.ToString("C")</p>
+                        <p style="color: red"><strong>Discount:</strong> @product.DiscountPercentage%</p>
+                    }
+                    else
+                    {
+                        <p><strong>Discount Price:</strong> @product.DiscountPrice.ToString("C")</p>
+                        <p><strong>Discount:</strong> @product.DiscountPercentage%</p>
+                    }
+
+                    <p><strong>Brand Name:</strong> @product.BrandName</p>
+                    <p><strong>Shop:</strong> @shopName</p>
+                    <p><strong>Description:</strong> @product.ProductDescription</p>
+                    <a href="@product.LinkUrl" target="_blank" rel="noopener noreferrer">View Product</a>
+                </div>
+            }
+        }
+        else
+        {
+            <p>No products found in the selected range...</p>
+        }
+    </div>
+}
+else
+{
+    <p>No products found.</p>
+}
+
+@code {
+    [Parameter]
+    public List<TProduct> Products { get; set; } = new();
+    public List<TProduct> ReceivedProducts { get; set; } = new();
+    private readonly ProductFilter<TProduct> _productFilter = new();
+    private List<TProduct> FilteredProducts { get; set; } = new();
+    private bool loading = true;
+    private List<ShopsModel> shopsModel = new();
+    private string SelectedBrand { get; set; }
+    private string SelectedShop { get; set; }
+    private int? MinPriceFilter { get; set; }
+    private int? MaxPriceFilter { get; set; }
+    private bool IsDiscountView { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        Products = new();
+        loading = true;
+        // Products = await FetchProductsAsync();
+
+        var client = HttpClientFactory.CreateClient("API");
+        var shops = await client.GetAsync("Shops/getShops");
+        shopsModel = await shops.Content.ReadFromJsonAsync<List<ShopsModel>>();
+
+        FilteredProducts = Products;
+        loading = false;
+
+        StateHasChanged();
+    }
+
+    private string GetShopNameFromId(Guid shopId)
+    {
+        return shopsModel.FirstOrDefault(s => s.Id == shopId)?.Name ?? "Unknown Shop";
+    }
+
+    public async Task FetchProductsAsync(List<TProduct> products)
+    {
+        if(products.Count() > 0)
+        {
+            Products = new();
+            Products = products;
+        }
+    }
+
+    public async Task<List<T>> GetDataAsync<T>(HttpClient client, string endpoint) where T : class
+    {
+        try
+        {
+            var response = await client.GetAsync(endpoint);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadFromJsonAsync<List<T>>();
+                return data ?? new List<T>();
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Error: {response.StatusCode}, Content: {errorContent}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception occurred while fetching data: {ex.Message}");
+        }
+
+        return new List<T>();
+    }
+
+
+    #region Filters
+    private void FilterByBrandName(string selectedBrand)
+    {
+        SelectedBrand = selectedBrand;
+        ApplyPriceFilter();
+    }
+
+    private void FilterByShopName(string selectedShop)
+    {
+        SelectedShop = selectedShop;
+        ApplyPriceFilter();
+    }
+
+    private void FilterByMinPrice(int? minPrice)
+    {
+        MinPriceFilter = minPrice;
+        ApplyPriceFilter();
+    }
+
+    private void FilterByMaxPrice(int? maxPrice)
+    {
+        MaxPriceFilter = maxPrice;
+        ApplyPriceFilter();
+    }
+
+    private void FilterByDiscount(bool isDiscount)
+    {
+        IsDiscountView = isDiscount;
+        ApplyPriceFilter();
+    }
+
+    private void ApplyPriceFilter()
+    {
+        IEnumerable<TProduct> filteredProducts = Products;
+
+        filteredProducts = _productFilter.FilterByProperty(filteredProducts, p => p.BrandName, SelectedBrand);
+
+        filteredProducts = _productFilter.FilterByProperty(filteredProducts, p => GetShopNameFromId(p.ShopId), SelectedShop);
+
+        filteredProducts = _productFilter.FilterByPriceRange(filteredProducts, p => p.StandardPrice, MinPriceFilter, MaxPriceFilter);
+
+        if (IsDiscountView)
+        {
+            filteredProducts = _productFilter.FilterByCondition(filteredProducts, p => p.DiscountPercentage > 0);
+        }
+
+        FilteredProducts = _productFilter.SortProducts(
+            filteredProducts,
+            p => IsDiscountView ? p.DiscountPercentage : (p.DiscountPercentage > 0 ? p.DiscountPrice : p.StandardPrice),
+            true).ToList();
+
+        StateHasChanged();
+    }
+
+    public class ProductFilter<T>
+    {
+        public IEnumerable<T> FilterByProperty(IEnumerable<T> products, Func<T, string> propertySelector, string selectedValue)
+        {
+            if (string.IsNullOrEmpty(selectedValue))
+                return products;
+
+            return products.Where(p => propertySelector(p).Equals(selectedValue, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public IEnumerable<T> FilterByPriceRange(IEnumerable<T> products, Func<T, decimal> priceSelector, decimal? minPrice, decimal? maxPrice)
+        {
+            return products.Where(p =>
+                (!minPrice.HasValue || priceSelector(p) >= minPrice.Value) &&
+                (!maxPrice.HasValue || priceSelector(p) <= maxPrice.Value));
+        }
+
+        public IEnumerable<T> FilterByCondition(IEnumerable<T> products, Func<T, bool> condition)
+        {
+            return products.Where(condition);
+        }
+
+        public IEnumerable<T> SortProducts(IEnumerable<T> products, Func<T, object> sortKeySelector, bool descending = false)
+        {
+            return descending ? products.OrderByDescending(sortKeySelector) : products.OrderBy(sortKeySelector);
+        }
+    }
+    #endregion
+}

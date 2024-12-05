@@ -1,125 +1,38 @@
 ﻿@page "/wash-machine"
 @using AutoMapper
-@using e_Scrap.Components.Pages.Filters
 @using e_Scrap.Models
 @using e_Scrap.Models.Common
 @using e_crap.Models.Common.WashMachine
-@using static e_Scrap.Components.Pages.Filters.DropdownFilter
 @inject HttpClient Http
 @inject IHttpClientFactory HttpClientFactory
 @inject IMapper mapper;
 @inject IJSRuntime JS
+@inject ProductPage<WashMachineModel> _getData
 @rendermode InteractiveServer
 
-<h3>Scraped Wash Machine Products</h3>
+<ProductPage TProduct="WashMachineModel" Products="@WashMachineProducts" />
 
-@if (loading)
-{
-    <p>Loading products, please wait...</p>
-}
-else if (WashMachineProducts != null && WashMachineProducts.Count > 0)
-{
-    <DropdownFilter BrandNameProducts="@WashMachineProducts.Select(p => p.BrandName.ToUpper()).Distinct().ToList()"
-                    ShopNames="@WashMachineProducts.Select(s => GetShopNameFromId( s.ShopId)).Distinct().ToList()"
-                    OnSelectedBrandName="FilterBrandNameWashMachineProducts"
-                    OnSelectedShopName="FilterShopNameWashMachineProducts"
-                    OnMinPriceChanged="FilterByMinPrice"
-                    OnMaxPriceChanged="FilterByMaxPrice"
-                    IsOnlyDiscountActive="FilterByDiscountPercentage" />
-
-    <div class="product-list">
-        @if (FilteredWashMachine.Count != 0)
-        {
-            @foreach (var product in FilteredWashMachine)
-            {
-                var shopName = GetShopNameFromId(product.ShopId);
-
-                <div class="product-card">
-                    <h5>@product.Name</h5>
-                    <img src="@product.ImageSmallUrl" alt="Lipseste imaginea" width="200" height="200" />
-                    <p><strong>Price:</strong> @product.StandardPrice.ToString("C")</p>
-
-                    @if (product.DiscountPercentage > 0)
-                    {
-                        <p style="color: red"><strong>Discount Price:</strong> @product.DiscountPrice.ToString("C")</p>
-                        <p style="color: red"><strong>Discount:</strong> @product.DiscountPercentage%</p>
-                    }
-                    else
-                    {
-                        <p><strong>Discount Price:</strong> @product.DiscountPrice.ToString("C")</p>
-                        <p><strong>Discount:</strong> @product.DiscountPercentage%</p>
-                    }
-
-                    <p><strong>Brand Name:</strong> @product.BrandName</p>
-                    <p><strong>Shop: </strong> @shopName</p>
-                    <p><strong>Description:</strong> @product.ProductDescription</p>
-                    <a href="@product.LinkUrl" target="_blank" rel="noopener noreferrer">View Product</a>
-                </div>
-            }
-        }
-        else
-        {
-            <p>Does not exist products in this range...</p>
-        }
-    </div>
-}
-
-else
-{
-    <p>No products found.</p>
-}
 
 @code {
     private bool loading = true;
-    private readonly ProductFilter<WashMachineModel> _productFilter = new();
     private List<WashMachineModel> WashMachineProducts = new();
-    private List<WashMachineModel> FilteredWashMachine = new();
-    private List<ShopsModel> shopsModel = new();
-    private string SelectedBrand { get; set; }
-    private string SelectedShop { get; set; }
-    private int? MinPriceFilter { get; set; }
-    private int? MaxPriceFilter { get; set; }
-    private bool IsDiscountView { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         loading = true;
         var client = HttpClientFactory.CreateClient("API");
-        var shops = await client.GetAsync("Shops/getShops");
-        shopsModel = await shops.Content.ReadFromJsonAsync<List<ShopsModel>>();
         WashMachineProducts = await GetAltexWashMachineProductAsync(client);
         WashMachineProducts.AddRange(await GetEMagWashMachine(client));
         WashMachineProducts.AddRange(await GetMediaGalaxyWashMachine(client));
-        FilteredWashMachine = WashMachineProducts;
         loading = false;
     }
    
     #region ShopsAPI
-    private void FilterProducts<T>(IEnumerable<T> sourceProducts, string selectedValue, Func<T, string> propertySelector, out List<T> filteredProducts)
-    {
-        Console.WriteLine($"Filtering products by selected value: {selectedValue}");
-
-        if (string.IsNullOrEmpty(selectedValue))
-        {
-            filteredProducts = sourceProducts.ToList();
-        }
-        else
-        {
-            filteredProducts = sourceProducts
-                .Where(p => propertySelector(p).Equals(selectedValue, StringComparison.OrdinalIgnoreCase))
-                .ToList();
-        }
-    }
-
-    protected string GetShopNameFromId( Guid shopId)
-    {
-        return shopsModel.FirstOrDefault(s => s.Id == shopId)?.Name ?? "Unknown Shop";
-    }
 
     protected async Task<List<WashMachineModel>> GetAltexWashMachineProductAsync(HttpClient client)
     {
         var endpoint = "AltexWashMachine/ScrapeAltexWashMachine";
-        var products = await GetDataAsync<WashMachineModel>(client, endpoint);
+        var products = await _getData.GetDataAsync<WashMachineModel>(client, endpoint);
 
         return products;
     }
@@ -127,7 +40,7 @@ else
     protected async Task<List<WashMachineModel>> GetEMagWashMachine(HttpClient client)
     {
         var endpoint = "eMagWashMachine/ScrapeEMagWashMachine";
-        var products = await GetDataAsync<WashMachineModel>(client, endpoint);
+        var products = await _getData.GetDataAsync<WashMachineModel>(client, endpoint);
 
         return products;
     }
@@ -135,89 +48,10 @@ else
     protected async Task<List<WashMachineModel>> GetMediaGalaxyWashMachine(HttpClient client)
     {
         var endpoint = "MediaGalaxyWashMachine/ScrapeWashMachineMediaGalaxyProducts";
-        var products = await GetDataAsync<WashMachineModel>(client, endpoint);
+        var products = await _getData.GetDataAsync<WashMachineModel>(client, endpoint);
 
         return products;
     }
 
-    protected async Task<List<T>> GetDataAsync<T>(HttpClient client, string endpoint) where T : class
-    {
-        try
-        {
-            var response = await client.GetAsync(endpoint);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var data = await response.Content.ReadFromJsonAsync<List<T>>();
-                return data ?? new List<T>();
-            }
-            else
-            {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Error: {response.StatusCode}, Content: {errorContent}");
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Exception occurred while fetching data: {ex.Message}");
-        }
-
-        return new List<T>();
-    }
-    #endregion
-
-    #region Filters
-    private void FilterBrandNameWashMachineProducts(string selectedBrand)
-    {
-        SelectedBrand = selectedBrand;
-        ApplyPriceFilter();
-    }
-
-    private void FilterShopNameWashMachineProducts(string selectedShop)
-    {
-        SelectedShop = selectedShop;
-        ApplyPriceFilter();
-    }
-
-    private void FilterByMinPrice(int? minPrice)
-    {
-        MinPriceFilter = minPrice;
-        ApplyPriceFilter();
-    }
-
-    private void FilterByMaxPrice(int? maxPrice)
-    {
-        MaxPriceFilter = maxPrice;
-        ApplyPriceFilter();
-    }
-
-    private void FilterByDiscountPercentage(bool isDiscount)
-    {
-        IsDiscountView = isDiscount;
-        ApplyPriceFilter();
-    }
-
-    private void ApplyPriceFilter()
-    {
-        IEnumerable<WashMachineModel> filteredProducts = WashMachineProducts;
-
-        filteredProducts = _productFilter.FilterByProperty(filteredProducts, p => p.BrandName, SelectedBrand);
-
-        filteredProducts = _productFilter.FilterByProperty(filteredProducts, p => GetShopNameFromId(p.ShopId), SelectedShop);
-
-        filteredProducts = _productFilter.FilterByPriceRange(filteredProducts, p => p.StandardPrice, MinPriceFilter, MaxPriceFilter);
-
-        if (IsDiscountView)
-        {
-            filteredProducts = _productFilter.FilterByCondition(filteredProducts, p => p.DiscountPercentage > 0);
-        }
-
-        FilteredWashMachine = _productFilter.SortProducts(
-            filteredProducts,
-            p => IsDiscountView ? p.DiscountPercentage : (p.DiscountPercentage > 0 ? p.DiscountPrice : p.StandardPrice),
-            true).ToList();
-
-        StateHasChanged();
-    }
     #endregion
 }
