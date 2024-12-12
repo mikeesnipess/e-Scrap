@@ -1,5 +1,4 @@
-﻿using e;
-using e_Scrap.Models;
+﻿using e_Scrap.Models;
 using eScrap.Services;
 using Microsoft.EntityFrameworkCore;
 

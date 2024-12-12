@@ -1,24 +1,38 @@
-﻿using e.Scrap.Entities.eMag;
-using e_Scrap.Entities;
-using e_Scrap.Entities.Altex;
-using e_Scrap.Entities.Dedeman;
-using e_Scrap.Entities.eMag;
-using e_Scrap.Entities.MediaGalaxy;
-using Entities.Altex;
-using eScrap.Entities.MediaGalaxy;
+﻿using e_Scrap.Entities;
+using Entities.Altex.GasCooker;
+using Entities.Altex.WashMachine;
+using Entities.Dedeman.Refrigerator;
+using Entities.eMag.GasCooker;
+using Entities.eMag.Refrigerator;
+using Entities.eMag.WashMachine;
+using Entities.MediaGalaxy.GasCooker;
+using Entities.MediaGalaxy.Refrigerator;
+using Entities.MediaGalaxy.WashMachinie;
+using eScrap.Entities.Altex.GasCooker;
+using eScrap.Entities.eMag.GasCooker;
+using eScrap.Entities.MediaGalaxy.GasCooker;
 using Microsoft.EntityFrameworkCore;
 
 public class AppSettingsDbContext : DbContext, IAppSettingsDbContext
 {
     public DbSet<AltexRefrigerator> AltexRefrigerator { get; private set; }
     public DbSet<AltexGasCooker> AltexGasCooker { get; private set; }
+    public DbSet<AltexGasCookerEmbedded> AltexGasCookerEmbedded { get; private set; }
+    public DbSet<AltexOvenEmbedded> AltexOvenEmbedded{ get; private set; }
+    public DbSet<AltexHood> AltexHood{ get; private set; }
     public DbSet<AltexWashMachine> AltexWashMachine { get; private set; }
     public DbSet<eMagGasCooker> eMagGasCooker { get; private set; }
+    public DbSet<eMagGasCookerEmbedded> eMagGasCookerEmbedded { get; private set; }
+    public DbSet<eMagOvenEmbedded> eMagOvenEmbedded { get; private set; }
+    public DbSet<eMagHood> eMagHood { get; private set; }
     public DbSet<eMagRefrigerator> eMagRefrigerator { get; private set; }
     public DbSet<eMagWashMachine> eMagWashMachine { get; private set; }
     public DbSet<DedemanRefrigerator> DedemanRefrigerator { get; private set; }
     public DbSet<MediaGalaxyRefrigerator> MediaGalaxyRefrigerator { get; private set; }
     public DbSet<MediaGalaxyGasCooker> MediaGalaxyGasCooker { get; private set; }
+    public DbSet<MediaGalaxyGasCookerEmbedded> MediaGalaxyGasCookerEmbedded { get; private set; }
+    public DbSet<MediaGalaxyOvenEmbedded> MediaGalaxyOvenEmbedded { get; private set; }
+    public DbSet<MediaGalaxyHood> MediaGalaxyHood { get; private set; }
     public DbSet<MediaGalaxyWashMachine> MediaGalaxyWashMachine { get; private set;}
     public DbSet<Shops> Shops { get; private set; }
 

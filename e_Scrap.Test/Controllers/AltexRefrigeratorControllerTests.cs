@@ -1,10 +1,10 @@
 ﻿using Controllers.Altex;
-using e.Services.Altex;
 using FakeItEasy;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models.Common.Refrigerator;
+using Services.Altex.Refrigerator;
 
 namespace e_Scrap.Test.Controllers
 {

@@ -1,12 +1,10 @@
 ﻿@page "/refrigerator"
-@using AutoMapper
 @using e_Scrap.Components.Pages.Filters
 @using e_Scrap.Models
 @using e_Scrap.Models.Common
 @using global::Models.Common.Refrigerator
 @inject HttpClient Http
 @inject IHttpClientFactory HttpClientFactory
-@inject IMapper mapper;
 @inject IJSRuntime JS
 @inject ProductPage<RefrigeratorModel> _getData;
 @rendermode InteractiveServer
@@ -16,7 +14,6 @@
 @code {
     private bool loading = true;
     private List<RefrigeratorModel> RefrigeratorProducts = new();
-
 
     protected override async Task OnInitializedAsync()
     {

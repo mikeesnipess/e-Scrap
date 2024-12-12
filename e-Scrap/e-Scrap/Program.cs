@@ -1,16 +1,18 @@
-using e.Services.Altex;
-using e_crap.Services.eMag;
 using e_Scrap.Components;
 using e_Scrap.Components.Pages.Common;
 using e_Scrap.Mapping;
-using e_Scrap.Services.Altex;
-using e_Scrap.Services.MediaGalaxy;
 using eScrap.Services;
-using eScrap.Services.Altex;
-using eScrap.Services.Dedeman;
-using eScrap.Services.eMag;
-using eScrap.Services.MediaGalaxy;
 using Microsoft.EntityFrameworkCore;
+using Services.Altex.GasCooker;
+using Services.Altex.Refrigerator;
+using Services.Altex.WashMachine;
+using Services.Dedeman.Refrigerator;
+using Services.eMag.GasCoooker;
+using Services.eMag.Refrigerator;
+using Services.eMag.WashMachine;
+using Services.MediaGalaxy.GasCooker;
+using Services.MediaGalaxy.Refrigerator;
+using Services.MediaGalaxy.WashMachine;
 
 
 var builder = WebApplication.CreateBuilder(args);

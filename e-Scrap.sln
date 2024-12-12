@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "e-Scrap", "e-Scrap\e-Scrap\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "e-Scrap.Client", "e-Scrap\e-Scrap.Client\e-Scrap.Client.csproj", "{438482F1-5FD3-4E5B-AD77-ED9382EC91F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "e_Scrap.Test", "e_Scrap.Test\e_Scrap.Test.csproj", "{8FB0CB38-96CB-4EB5-A01E-3ECDA14652B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "e_Scrap.Test", "e_Scrap.Test\e_Scrap.Test.csproj", "{8FB0CB38-96CB-4EB5-A01E-3ECDA14652B4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
