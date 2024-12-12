@@ -53,7 +53,7 @@ else
     {
         loading = true;
         var client = HttpClientFactory.CreateClient("API");
-        var response = await client.GetAsync("AltexGasCooker/ScrapeGasCookerAltexProducts");
+        var response = await client.GetAsync("AltexGasCooker/AltexGasCooker");
         var shops = await client.GetAsync("Shops/getShops");
 
         if (response.IsSuccessStatusCode)

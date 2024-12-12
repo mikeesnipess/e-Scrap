@@ -12,21 +12,47 @@
 @rendermode InteractiveServer
 
 
-<ProductPage TProduct="GasCookerModel" Products="@GasCookerProducts" />
+<div>
+    <label for="isEmbedded">
+        Show only Embedded Gas Cooker?
+        <input type="checkbox" id="verifyActivity" @bind="IsOnlyEmbedded" @bind:event="onchange" />
+    </label>
+</div>
 
+@if (!verifyEmbedded)
+{
+    <ProductPage TProduct="GasCookerModel" Products="@GasCookerProducts" />
+}
+else
+{
+
+    <ProductPage TProduct="GasCookerModel" Products="@GasCookerProducts" />
+}
 
 @code {
     private bool loading = true;
+    private bool verifyEmbedded = false;
     private List<GasCookerModel> GasCookerProducts = new();
+
 
     protected override async Task OnInitializedAsync()
     {
-        loading = true;
         var client = HttpClientFactory.CreateClient("API");
-        GasCookerProducts = await GetAltexGasCookerProductsAsync(client);
-        GasCookerProducts.AddRange(await GetEMaGasCookerProductsAsync(client));
-        GasCookerProducts.AddRange(await GetMediaGalaxyGasCookerProductsAsync(client));
-
+        if (!verifyEmbedded)
+        {
+            loading = true;
+            GasCookerProducts = new();
+            GasCookerProducts = await GetAltexGasCookerProductsAsync(client);
+            GasCookerProducts.AddRange(await GetEMaGasCookerProductsAsync(client));
+            GasCookerProducts.AddRange(await GetMediaGalaxyGasCookerProductsAsync(client));
+        }
+        else
+        {
+            GasCookerProducts = new();
+            GasCookerProducts = await GetAltexGasCookerEmbeddedProductsAsync(client);
+            GasCookerProducts.AddRange(await GetAltexOvenEmbeddedProductsAsync(client));
+            GasCookerProducts.AddRange(await GetAltexHoodProductsAsync(client));
+        }
         loading = false;
         StateHasChanged();
     }
@@ -34,20 +60,51 @@
     #region ShopAPI
     private async Task<List<GasCookerModel>> GetAltexGasCookerProductsAsync(HttpClient client)
     {
-        var endpoint = "AltexGasCooker/ScrapeGasCookerAltexProducts";
+        var endpoint = "AltexGasCooker/AltexGasCooker";
+        return await _getData.GetDataAsync<GasCookerModel>(client, endpoint);
+    }
+
+    private async Task<List<GasCookerModel>> GetAltexGasCookerEmbeddedProductsAsync(HttpClient client)
+    {
+        var endpoint = "AltexGasCooker/AltexGasCookerEmbedded";
+        return await _getData.GetDataAsync<GasCookerModel>(client, endpoint);
+    }
+
+    private async Task<List<GasCookerModel>> GetAltexOvenEmbeddedProductsAsync(HttpClient client)
+    {
+        var endpoint = "AltexGasCooker/AltexOvenEmbedded";
+        return await _getData.GetDataAsync<GasCookerModel>(client, endpoint);
+    }
+
+    private async Task<List<GasCookerModel>> GetAltexHoodProductsAsync(HttpClient client)
+    {
+        var endpoint = "AltexGasCooker/AltexHood";
         return await _getData.GetDataAsync<GasCookerModel>(client, endpoint);
     }
 
     private async Task<List<GasCookerModel>> GetEMaGasCookerProductsAsync(HttpClient client)
     {
-        var endpoint = "eMagGasCooker/eMagScrapeGasCookerProducts";
+        var endpoint = "eMagGasCooker/eMagGasCooker";
         return await _getData.GetDataAsync<GasCookerModel>(client, endpoint);
     }
 
     private async Task<List<GasCookerModel>> GetMediaGalaxyGasCookerProductsAsync(HttpClient client)
     {
-        var endpoint = "MediaGalaxyGasCooker/ScrapeGasCookerMediaGalaxyProducts";
+        var endpoint = "MediaGalaxyGasCooker/MediaGalaxyGasCooker";
         return await _getData.GetDataAsync<GasCookerModel>(client, endpoint);
     }
     #endregion
+
+    private bool IsOnlyEmbedded
+    {
+        get => verifyEmbedded;
+        set
+        {
+            if (verifyEmbedded != value)
+            {
+                verifyEmbedded = value;
+                OnInitializedAsync();
+            }
+        }
+    }
 }

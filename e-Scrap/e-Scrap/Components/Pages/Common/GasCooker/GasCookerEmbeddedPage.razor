@@ -1,0 +1,55 @@
+﻿@page "/gas-cooker-embedded"
+@using AutoMapper
+@using eScrap.Models.Common
+@using e_Scrap.Components.Pages.Filters
+@using e_Scrap.Models
+@using e_Scrap.Models.Common.GasCooker
+@inject HttpClient Http
+@inject IHttpClientFactory HttpClientFactory
+@inject IMapper mapper
+@inject IJSRuntime JS
+@inject ProductPage<GasCookerModel> _getData;
+@rendermode InteractiveServer
+
+<ProductPage TProduct="GasCookerModel" Products="@GasCookerProducts" />
+
+@code {
+    private bool loading = true;
+    private List<GasCookerModel> GasCookerProducts = new();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        loading = true;
+        GasCookerProducts = new();
+        var client = HttpClientFactory.CreateClient("API");
+        GasCookerProducts = await GetAltexGasCookerEmbeddedProductsAsync(client);
+        GasCookerProducts.AddRange(await GetEmagGasCookerEmbeddedProductsAsync(client));
+        GasCookerProducts.AddRange(await GetMediaGalaxyGasCookerEmbeddedProductsAsync(client));
+
+        loading = false;
+        StateHasChanged();
+    }
+
+    #region ShopAPI
+    
+    private async Task<List<GasCookerModel>> GetAltexGasCookerEmbeddedProductsAsync(HttpClient client)
+    {
+        var endpoint = "AltexGasCooker/AltexGasCookerEmbedded";
+        return await _getData.GetDataAsync<GasCookerModel>(client, endpoint);
+    }
+
+    private async Task<List<GasCookerModel>> GetEmagGasCookerEmbeddedProductsAsync(HttpClient client)
+    {
+        var endpoint = "eMagGasCooker/eMagGasCookerEmbbeded";
+        return await _getData.GetDataAsync<GasCookerModel>(client, endpoint);
+    }
+
+    private async Task<List<GasCookerModel>> GetMediaGalaxyGasCookerEmbeddedProductsAsync(HttpClient client)
+    {
+        var endpoint = "MediaGalaxyGasCooker/MediaGalaxyGasCookerEmbedded";
+        return await _getData.GetDataAsync<GasCookerModel>(client, endpoint);
+    }
+
+    #endregion
+}
