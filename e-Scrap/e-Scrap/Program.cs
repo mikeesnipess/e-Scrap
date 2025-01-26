@@ -1,9 +1,16 @@
 using e_Scrap.Components;
 using e_Scrap.Components.Pages.Common;
+using e_Scrap.Components.Pages.Filters;
 using e_Scrap.Mapping;
 using eScrap.Services;
+using eScrap.Services.Altex.Laptop;
+using eScrap.Services.eMag.Laptop;
+using eScrap.Services.eMag.Phone;
+using eScrap.Services.MediaGalaxy.Laptop;
+using eScrap.Services.MediaGalaxy.Phone;
 using Microsoft.EntityFrameworkCore;
 using Services.Altex.GasCooker;
+using Services.Altex.Phone;
 using Services.Altex.Refrigerator;
 using Services.Altex.WashMachine;
 using Services.Dedeman.Refrigerator;
@@ -32,27 +39,33 @@ builder.Services.AddHttpClient();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddHttpClient<UltraMdRefrigeratorService>();
 builder.Services.AddHttpClient<AltexRefrigeratorService>();
-builder.Services.AddScoped<IAltexRefrigeratorService,AltexRefrigeratorService>();
-builder.Services.AddScoped<IAltexGasCookerService,AltexGasCookerService>();
-builder.Services.AddScoped<IAltexWashMachineService,AltexWashMachineService>();
-builder.Services.AddScoped<IEmagGasCookerService,eMagGasCookerService>();
-builder.Services.AddScoped<IEmagRefrigeratorService,eMagRefrigeratorService>();
-builder.Services.AddScoped<IEmagWashMachineService,eMagWashMachineService>();
-builder.Services.AddScoped<IDedemanRefrigeratorService,DedemanRefrigeratorService>();
-builder.Services.AddScoped<IMediaGalaxyRefrigeratorService,MediaGalaxyRefrigeratorService>();
-builder.Services.AddScoped<IMediaGalaxyGasCookerService,MediaGalaxyGasCookerService>();
-builder.Services.AddScoped<IMediaGalaxyWashMachineService,MediaGalaxyWashMachineService>();
-builder.Services.AddScoped<IShopService,ShopsService>();
-builder.Services.AddTransient(typeof(ProductPage<>)); 
+builder.Services.AddScoped<IAltexRefrigeratorService, AltexRefrigeratorService>();
+builder.Services.AddScoped<IAltexGasCookerService, AltexGasCookerService>();
+builder.Services.AddScoped<IAltexWashMachineService, AltexWashMachineService>();
+builder.Services.AddScoped<IAltexPhoneService, AltexPhoneService>();
+builder.Services.AddScoped<IAltexLaptopService, AltexLaptopService>();
+builder.Services.AddScoped<IEmagGasCookerService, eMagGasCookerService>();
+builder.Services.AddScoped<IEmagRefrigeratorService, eMagRefrigeratorService>();
+builder.Services.AddScoped<IEmagWashMachineService, eMagWashMachineService>();
+builder.Services.AddScoped<IEmagPhoneService, eMagPhoneService>();
+builder.Services.AddScoped<IEmagLaptopService, eMagLaptopService>();
+builder.Services.AddScoped<IDedemanRefrigeratorService, DedemanRefrigeratorService>();
+builder.Services.AddScoped<IMediaGalaxyRefrigeratorService, MediaGalaxyRefrigeratorService>();
+builder.Services.AddScoped<IMediaGalaxyGasCookerService, MediaGalaxyGasCookerService>();
+builder.Services.AddScoped<IMediaGalaxyWashMachineService, MediaGalaxyWashMachineService>();
+builder.Services.AddScoped<IMediaGalaxyPhoneService, MediaGalaxyPhoneService>();
+builder.Services.AddScoped<IMediaGalaxyLaptopService, MediaGalaxyLaptopService>();
+builder.Services.AddScoped<IShopService, ShopsService>();
+builder.Services.AddTransient(typeof(ProductPage<>));
 
 // Add services to the container
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents()
-    .AddInteractiveWebAssemblyComponents();
+    .AddInteractiveServerComponents();
+    //.AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddControllers();
 
-builder.Services.AddDbContext<IAppSettingsDbContext,AppSettingsDbContext>(options =>
+builder.Services.AddDbContext<IAppSettingsDbContext, AppSettingsDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConection"));
 });
@@ -95,7 +108,7 @@ app.MapControllers(); // Ensure controllers are mapped
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
-    .AddInteractiveWebAssemblyRenderMode()
+    //.AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(e_Scrap.Client._Imports).Assembly);
 
 app.Run();

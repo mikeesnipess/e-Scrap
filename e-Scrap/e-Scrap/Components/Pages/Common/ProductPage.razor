@@ -4,7 +4,7 @@
 @inject IHttpClientFactory HttpClientFactory
 @typeparam TProduct where TProduct : ProductModel
 
-<h3>Scraped @typeof(TProduct).Name Products</h3>
+<h3 class="upper-name-products">Scraped @typeof(TProduct).Name Products</h3>
 
 @if (loading)
 {
@@ -13,42 +13,47 @@
 else if (Products != null && Products.Count > 0)
 {
     <DropdownFilter T="TProduct"
-                    BrandNameProducts="@Products.Select(p => p.BrandName.ToUpper()).Distinct().ToList()"
-                    ShopNames="@Products.Select(p => GetShopNameFromId(p.ShopId)).Distinct().ToList()"
-                    OnSelectedBrandName="FilterByBrandName"
-                    OnSelectedShopName="FilterByShopName"
-                    OnMinPriceChanged="FilterByMinPrice"
-                    OnMaxPriceChanged="FilterByMaxPrice"
-                    IsOnlyDiscountActive="FilterByDiscount" />
+    BrandNameProducts="@Products.Select(p => p.BrandName.ToUpper()).Distinct().ToList()"
+    ShopNames="@Products.Select(p => GetShopNameFromId(p.ShopId)).Distinct().ToList()"
+    OnSelectedBrandName="FilterByBrandName"
+    OnSelectedShopName="FilterByShopName"
+    OnMinPriceChanged="FilterByMinPrice"
+    OnMaxPriceChanged="FilterByMaxPrice"
+    IsOnlyDiscountActive="FilterByDiscount" />
 
+    <hr class="category-divider" />
 
-    <div class="product-list">
+    <div class="show-products">
         @if (FilteredProducts.Count > 0)
         {
-            @foreach (var product in FilteredProducts)
+            var displayedProducts = FilteredProducts.Take(DisplayCount).ToList();
+
+            @foreach (var product in displayedProducts)
             {
                 var shopName = GetShopNameFromId(product.ShopId);
 
-                <div class="product-card">
-                    <h5>@product.Name</h5>
-                    <img src="@product.ImageSmallUrl" alt="Image missing" width="200" height="200" />
-                    <p><strong>Price:</strong> @product.StandardPrice.ToString("C")</p>
+                <div class="show-product-card">
+                    <img src="@product.ImageSmallUrl" alt="Image missing" class="product-image" />
+                    <div class="product-details">
+                        <h5 class="product-name">@product.Name</h5>
+                        <p class="product-price"><strong>Price:</strong> @product.StandardPrice.ToString("C")</p>
 
-                    @if (product.DiscountPercentage > 0)
-                    {
-                        <p style="color: red"><strong>Discount Price:</strong> @product.DiscountPrice.ToString("C")</p>
-                        <p style="color: red"><strong>Discount:</strong> @product.DiscountPercentage%</p>
-                    }
-                    else
-                    {
-                        <p><strong>Discount Price:</strong> @product.DiscountPrice.ToString("C")</p>
-                        <p><strong>Discount:</strong> @product.DiscountPercentage%</p>
-                    }
+                        @if (product.DiscountPercentage > 0)
+                        {
+                            <p class="discount-price"><strong>Discount Price:</strong> @product.DiscountPrice.ToString("C")</p>
+                            <p class="discount-percentage"><strong>Discount:</strong> @product.DiscountPercentage%</p>
+                        }
+                        else
+                        {
+                            <p class="discount-price"><strong>Discount Price:</strong> @product.DiscountPrice.ToString("C")</p>
+                            <p class="discount-percentage"><strong>Discount:</strong> @product.DiscountPercentage%</p>
+                        }
 
-                    <p><strong>Brand Name:</strong> @product.BrandName</p>
-                    <p><strong>Shop:</strong> @shopName</p>
-                    <p><strong>Description:</strong> @product.ProductDescription</p>
-                    <a href="@product.LinkUrl" target="_blank" rel="noopener noreferrer">View Product</a>
+                        <p><strong>Brand Name:</strong> @product.BrandName</p>
+                        <p><strong>Shop:</strong> @shopName</p>
+                        <p class="product-description"><strong>Description:</strong> @product.ProductDescription</p>
+                        <a href="@product.LinkUrl" target="_blank" rel="noopener noreferrer" class="view-product-button">View Product</a>
+                    </div>
                 </div>
             }
         }
@@ -56,7 +61,15 @@ else if (Products != null && Products.Count > 0)
         {
             <p>No products found in the selected range...</p>
         }
+
+        @if (DisplayCount < FilteredProducts.Count)
+        {
+            <button class="show-more-button" @onclick="ShowMoreProducts">Show More</button>
+            <button class="show-all-button" @onclick="ShowAllProducts">Show All Products</button>
+        }
     </div>
+
+
 }
 else
 {
@@ -66,7 +79,6 @@ else
 @code {
     [Parameter]
     public List<TProduct> Products { get; set; } = new();
-    public List<TProduct> ReceivedProducts { get; set; } = new();
     private readonly ProductFilter<TProduct> _productFilter = new();
     private List<TProduct> FilteredProducts { get; set; } = new();
     private bool loading = true;
@@ -77,36 +89,41 @@ else
     private int? MaxPriceFilter { get; set; }
     private bool IsDiscountView { get; set; }
 
+    private int DisplayCount { get; set; } = 50;
+
 
     protected override async Task OnInitializedAsync()
     {
         Products = new();
         loading = true;
-        // Products = await FetchProductsAsync();
 
         var client = HttpClientFactory.CreateClient("API");
         var shops = await client.GetAsync("Shops/getShops");
         shopsModel = await shops.Content.ReadFromJsonAsync<List<ShopsModel>>();
 
-        FilteredProducts = Products;
         loading = false;
 
         StateHasChanged();
     }
+
+    private void ShowMoreProducts()
+    {
+        DisplayCount += 50;
+        StateHasChanged();
+    }
+
+    private void ShowAllProducts()
+    {
+        DisplayCount = Products.Count();
+        StateHasChanged();
+    }
+
 
     private string GetShopNameFromId(Guid shopId)
     {
         return shopsModel.FirstOrDefault(s => s.Id == shopId)?.Name ?? "Unknown Shop";
     }
 
-    public async Task FetchProductsAsync(List<TProduct> products)
-    {
-        if(products.Count() > 0)
-        {
-            Products = new();
-            Products = products;
-        }
-    }
 
     public async Task<List<T>> GetDataAsync<T>(HttpClient client, string endpoint) where T : class
     {
@@ -170,9 +187,7 @@ else
         IEnumerable<TProduct> filteredProducts = Products;
 
         filteredProducts = _productFilter.FilterByProperty(filteredProducts, p => p.BrandName, SelectedBrand);
-
         filteredProducts = _productFilter.FilterByProperty(filteredProducts, p => GetShopNameFromId(p.ShopId), SelectedShop);
-
         filteredProducts = _productFilter.FilterByPriceRange(filteredProducts, p => p.StandardPrice, MinPriceFilter, MaxPriceFilter);
 
         if (IsDiscountView)
@@ -185,6 +200,7 @@ else
             p => IsDiscountView ? p.DiscountPercentage : (p.DiscountPercentage > 0 ? p.DiscountPrice : p.StandardPrice),
             true).ToList();
 
+        DisplayCount = 50; // Reset the display count when a filter is applied
         StateHasChanged();
     }
 

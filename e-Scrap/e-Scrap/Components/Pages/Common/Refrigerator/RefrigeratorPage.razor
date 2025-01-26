@@ -5,9 +5,9 @@
 @using global::Models.Common.Refrigerator
 @inject HttpClient Http
 @inject IHttpClientFactory HttpClientFactory
-@inject IJSRuntime JS
+@* @inject IJSRuntime JS *@
 @inject ProductPage<RefrigeratorModel> _getData;
-@rendermode InteractiveServer
+
 
 <ProductPage TProduct="RefrigeratorModel" Products="@RefrigeratorProducts" />
 

@@ -1,32 +1,44 @@
 ﻿@typeparam T
 
-<div>
-    Set average price from Minimum:
-    <input type="number" id="fromPrice" min="1" @bind-value="MinPrice" />
-    to Maximum:
-    <input type="number" id="toPrice" min="1" @bind-value="MaxPrice" />
-    <input type="submit" value="Confirm" @onclick="ApplyPriceFilter" />
-    <br />
-    <select @onchange="e => OnSelectedBrandName.InvokeAsync(e.Value.ToString())">
-        <option value="">All Brands</option>
-        @foreach (var brand in BrandNameProducts)
-        {
-            <option value="@brand">@brand</option>
-        }
-    </select>
+<div class="filter-container">
+    <div class="price-filter">
+        <label for="fromPrice">Set average price:</label>
+        <div class="price-inputs">
+            <input type="number" id="fromPrice" min="1" @bind-value="MinPrice" placeholder="Minimum Price" />
+            <span>to</span>
+            <input type="number" id="toPrice" min="1" @bind-value="MaxPrice" placeholder="Maximum Price" />
+        </div>
+        <button class="confirm-button" @onclick="ApplyPriceFilter">Confirm</button>
+    </div>
 
-    <select @onchange="e => OnSelectedShopName.InvokeAsync(e.Value.ToString())">
-        <option value="">All Shops</option>
-        @foreach (var shop in ShopNames)
-        {
-            <option value="@shop">@shop</option>
-        }
-    </select>
-    <label for="isDiscount">
-        Show only Discount?
-        <input type="checkbox" id="verifyActivity" @bind="IsOnlyDiscount" @bind:event="onchange" />
-    </label>
+    <div class="dropdown-filters">
+        <label for="brandSelect">Brand:</label>
+        <select id="brandSelect" @onchange="e => OnSelectedBrandName.InvokeAsync(e.Value.ToString())">
+            <option value="">All Brands</option>
+            @foreach (var brand in BrandNameProducts)
+            {
+                <option value="@brand">@brand</option>
+            }
+        </select>
+
+        <label for="shopSelect">Shop:</label>
+        <select id="shopSelect" @onchange="e => OnSelectedShopName.InvokeAsync(e.Value.ToString())">
+            <option value="">All Shops</option>
+            @foreach (var shop in ShopNames)
+            {
+                <option value="@shop">@shop</option>
+            }
+        </select>
+    </div>
+
+    <div class="checkbox-filter">
+        <label for="isDiscount">
+            <input type="checkbox" id="isDiscount" @bind="IsOnlyDiscount" @bind:event="onchange" />
+            Show only Discount?
+        </label>
+    </div>
 </div>
+
 
 @code {
     [Parameter]
