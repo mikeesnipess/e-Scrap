@@ -20,21 +20,14 @@ namespace eScrap.Controllers.eMag.Laptop
         [HttpGet("laptop")]
         public async Task<ActionResult<List<LaptopModel>>> ScrapLaptopProducts()
         {
-            try
-            {
-                List<LaptopModel> result = await _scrapService.GetEmagLaptop();
+            List<LaptopModel> result = await _scrapService.GetEmagLaptop();
 
-                if (result == null || result.Count == 0)
-                {
-                    return NotFound("No products found.");
-                }
-
-                return Ok(result);
-            }
-            catch (Exception ex)
+            if (result == null || result.Count == 0)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return NotFound("No products found.");
             }
+
+            return Ok(result);
         }
     }
 }

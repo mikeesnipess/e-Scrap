@@ -18,81 +18,50 @@ public class AltexGasCookerController : ControllerBase
     [HttpGet("gas-cooker")]
     public async Task<ActionResult<List<GasCookerModel>>> ScrapGasCookerProducts()
     {
-        try
-        {
-            List<GasCookerModel> result = await _scrapService.GetGasCookerAltex();
+        List<GasCookerModel> result = await _scrapService.GetGasCookerAltex();
 
-            if (result == null || result.Count == 0)
-            {
-                return NotFound("No products found.");
-            }
-
-            return Ok(result);
-        }
-        catch (Exception ex)
+        if (result == null || result.Count == 0)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            return NotFound("No products found.");
         }
+
+        return Ok(result);
     }
 
     [HttpGet("gas-cooker-embedded")]
     public async Task<ActionResult<List<GasCookerModel>>> ScrapeGasCookerEmbeddedProducts()
     {
-        try
+        List<GasCookerModel> result = await _scrapService.GetGasCookerEmbeddedAltex();
+        if (result == null || result.Count == 0)
         {
-            List<GasCookerModel> result = await _scrapService.GetGasCookerEmbeddedAltex();
-            if (result == null || result.Count == 0)
-            {
-                return NotFound("No GasCookerEmbedded products found.");
-            }
-
-            return Ok(result);
+            return NotFound("No GasCookerEmbedded products found.");
         }
-        catch (Exception ex)
-        {
 
-            return StatusCode(500, $"Internet server error {ex.Message}");
-        }
+        return Ok(result);
     }
 
     [HttpGet("oven-embedded")]
     public async Task<ActionResult<List<GasCookerModel>>> ScrapeAltexOvenEmbeddedProducts()
     {
-        try
+        List<GasCookerModel> result = await _scrapService.GetOvenEmbeddedAltex();
+        if (result == null || result.Count == 0)
         {
-            List<GasCookerModel> result = await _scrapService.GetOvenEmbeddedAltex();
-            if (result == null || result.Count == 0)
-            {
-                return NotFound("No OvenEmbedded products found.");
-            }
+            return NotFound("No OvenEmbedded products found.");
+        }
 
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internest server error {ex.Message}");
-        }
+        return Ok(result);
     }
 
     [HttpGet("hood")]
     public async Task<ActionResult<List<GasCookerModel>>> ScrapeAltexHoodProducts()
     {
-        try
+        List<GasCookerModel> result = await _scrapService.GetHoodAltex();
+        if (result == null || result.Count == 0)
         {
-            List<GasCookerModel> result = await _scrapService.GetHoodAltex();
-            if (result == null || result.Count == 0)
-            {
-                return NotFound("No AltexHood products found."); 
-            }
-
-            return Ok(result);
-
-
+            return NotFound("No AltexHood products found.");
         }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internet server error {ex.Message}");
-        }
+
+        return Ok(result);
     }
 }
 

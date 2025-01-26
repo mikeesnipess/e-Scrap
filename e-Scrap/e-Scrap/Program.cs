@@ -1,7 +1,7 @@
 using e_Scrap.Components;
 using e_Scrap.Components.Pages.Common;
-using e_Scrap.Components.Pages.Filters;
 using e_Scrap.Mapping;
+using eScrap.Middleware;
 using eScrap.Services;
 using eScrap.Services.Altex.Laptop;
 using eScrap.Services.eMag.Laptop;
@@ -61,7 +61,7 @@ builder.Services.AddTransient(typeof(ProductPage<>));
 // Add services to the container
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
-    //.AddInteractiveWebAssemblyComponents();
+//.AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddControllers();
 
@@ -93,6 +93,9 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+app.UseMiddleware<RequestLoggingMiddleware>();
+
 app.UseRouting(); // Ensure routing is enabled
 
 app.UseCors("AllowAllOrigins"); // Enable CORS policy

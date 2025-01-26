@@ -20,20 +20,13 @@ namespace eScrap.Controllers.eMag.Phone
         [HttpGet("phone")]
         public async Task<ActionResult<List<PhoneModel>>> ScrapePhoneProducts()
         {
-            try
+            List<PhoneModel> result = await _emagPhoneService.GetEmagPhones();
+            if (result == null || result.Count == 0)
             {
-                List<PhoneModel> result = await _emagPhoneService.GetEmagPhones();
-                if (result == null || result.Count == 0)
-                {
-                    return NotFound("No products found.");
-                }
+                return NotFound("No products found.");
+            }
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            return Ok(result);
         }
     }
 }

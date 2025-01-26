@@ -80,21 +80,15 @@ namespace Controllers.MediaGalaxy.GasCooker
         [HttpGet("hood")]
         public async Task<ActionResult<List<GasCookerModel>>> MediaGalaxyHood()
         {
-            try
-            {
-                List<GasCookerModel> result = await _scrapService.GetMediaGalaxyHood();
+            List<GasCookerModel> result = await _scrapService.GetMediaGalaxyHood();
 
-                if (result == null || result.Count == 0)
-                {
-                    return NotFound("No products found.");
-                }
-
-                return Ok(result);
-            }
-            catch (Exception ex)
+            if (result == null || result.Count == 0)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return NotFound("No products found.");
             }
+
+            return Ok(result);
+
         }
     }
 }

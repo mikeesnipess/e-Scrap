@@ -20,21 +20,14 @@ namespace eScrap.Controllers.Altex.Phone
         [HttpGet("phone")]
         public async Task<ActionResult<List<PhoneModel>>> ScrapPhoneProducts()
         {
-            try
-            {
-                List<PhoneModel> result = await _scrapService.GetPhoneListAsync();
+            List<PhoneModel> result = await _scrapService.GetPhoneListAsync();
 
-                if (result == null || result.Count == 0)
-                {
-                    return NotFound("No products found.");
-                }
-
-                return Ok(result);
-            }
-            catch (Exception ex)
+            if (result == null || result.Count == 0)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return NotFound("No products found.");
             }
+
+            return Ok(result);
         }
     }
 }
