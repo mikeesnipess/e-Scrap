@@ -53,8 +53,8 @@ else
     {
         loading = true;
         var client = HttpClientFactory.CreateClient("API");
-        var response = await client.GetAsync("eMagGasCooker/eMagGasCooker");
-        var shops = await client.GetAsync("Shops/getShops");
+        var response = await client.GetAsync("api/emag/gas-cooker");
+        var shops = await client.GetAsync("api/shop");
 
         if (response.IsSuccessStatusCode)
         { 

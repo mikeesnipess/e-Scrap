@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace e_Scrap.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/shop")]
     public class ShopsController : Controller
     {
         private readonly IAppSettingsDbContext _context;
@@ -15,25 +15,18 @@ namespace e_Scrap.Controllers
             _context = context;
             _shopsService = shopsService;
         }
-        [HttpGet("getShops")]
+        [HttpGet]
 
         public async Task<ActionResult<List<ShopsModel>>> GetShops()
         {
-            try
-            {
-                List<ShopsModel> result = await _shopsService.GetShopsModel();
+            List<ShopsModel> result = await _shopsService.GetShopsModel();
 
-                if (result == null || result.Count == 0)
-                {
-                    return NotFound("No products found.");
-                }
-
-                return Ok(result);
-            }
-            catch (Exception ex)
+            if (result == null || result.Count == 0)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return NotFound("No products found.");
             }
+
+            return Ok(result);
         }
     }
 }

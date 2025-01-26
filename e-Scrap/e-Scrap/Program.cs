@@ -98,9 +98,10 @@ app.UseMiddleware<RequestLoggingMiddleware>();
 
 app.UseRouting(); // Ensure routing is enabled
 
+app.UseAntiforgery(); // Place it here, after UseRouting and before UseEndpoints
+
 app.UseCors("AllowAllOrigins"); // Enable CORS policy
 
-app.UseAntiforgery(); // Place it here, after UseRouting and before UseEndpoints
 
 // The order of authentication/authorization middleware matters
 // Add these only if you're using authentication and authorization
