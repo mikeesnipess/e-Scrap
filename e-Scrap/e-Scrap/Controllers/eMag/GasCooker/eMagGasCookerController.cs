@@ -18,78 +18,50 @@ public class eMagGasCookerController : ControllerBase
     [HttpGet("gas-cooker")]
     public async Task<ActionResult<List<GasCookerModel>>> ScrapGasCookerProducts()
     {
-        try
-        {
-            List<GasCookerModel> result = await _scrapService.GetGasCookerProducts();
+        List<GasCookerModel> result = await _scrapService.GetGasCookerProducts();
 
-            if (result == null || result.Count == 0)
-            {
-                return NotFound("No products found.");
-            }
-
-            return Ok(result);
-        }
-        catch (Exception ex)
+        if (result == null || result.Count == 0)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            return NotFound("No products found.");
         }
+
+        return Ok(result);
     }
 
     [HttpGet("gas-cooker-embedded")]
     public async Task<ActionResult<List<GasCookerModel>>> ScrapeGasCoookerEmbeddedProducts()
     {
-        try
+        List<GasCookerModel> result = await _scrapService.GetGasCookerEmbeddedProducts();
+        if (result == null || result.Count == 0)
         {
-            List<GasCookerModel> result = await _scrapService.GetGasCookerEmbeddedProducts();
-            if (result == null || result.Count == 0)
-            {
-                return NotFound("eMag GasCooker embedded products not found");
-            }
+            return NotFound("eMag GasCooker embedded products not found");
+        }
 
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internet server error: {ex.Message}");
-        }
+        return Ok(result);
     }
 
 
     [HttpGet("oven-embedded")]
     public async Task<ActionResult<List<GasCookerModel>>> ScrapeOvenEmbeddedProducts()
     {
-        try
+        List<GasCookerModel> result = await _scrapService.GetOvenEmbeddedProducts();
+        if (result == null || result.Count == 0)
         {
-            List<GasCookerModel> result = await _scrapService.GetOvenEmbeddedProducts();
-            if (result == null || result.Count == 0)
-            {
-                return NotFound("eMag Oven embedded products not found");
-            }
+            return NotFound("eMag Oven embedded products not found");
+        }
 
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internet server error: {ex.Message}");
-        }
+        return Ok(result);
     }
 
     [HttpGet("hood")]
     public async Task<ActionResult<List<GasCookerModel>>> ScrapeHoodProducts()
     {
-        try
+        List<GasCookerModel> result = await _scrapService.GetHoodProducts();
+        if (result == null || result.Count == 0)
         {
-            List<GasCookerModel> result = await _scrapService.GetHoodProducts();
-            if (result == null || result.Count == 0)
-            {
-                return NotFound("eMag Hood embedded products not found");
-            }
+            return NotFound("eMag Hood embedded products not found");
+        }
 
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internet server error: {ex.Message}");
-        }
+        return Ok(result);
     }
 }

@@ -20,21 +20,14 @@ namespace Controllers.MediaGalaxy.WashMachine
         [HttpGet("wash-machine")]
         public async Task<ActionResult<List<WashMachineModel>>> ScrapeRefrigeratorProducts()
         {
-            try
-            {
-                List<WashMachineModel> result = await _scrapService.GetMediaGalaxyWashMachine();
+            List<WashMachineModel> result = await _scrapService.GetMediaGalaxyWashMachine();
 
-                if (result == null || result.Count == 0)
-                {
-                    return NotFound("No products found.");
-                }
-
-                return Ok(result);
-            }
-            catch (Exception ex)
+            if (result == null || result.Count == 0)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return NotFound("No products found.");
             }
+
+            return Ok(result);
         }
     }
 }

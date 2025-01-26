@@ -21,21 +21,14 @@ namespace Controllers.MediaGalaxy.Refrigerator
         [HttpGet("refrigerator")]
         public async Task<ActionResult<List<RefrigeratorModel>>> ScrapeRefrigeratorProducts()
         {
-            try
-            {
-                List<RefrigeratorModel> result = await _scrapService.GetMediaGalaxyRefrigerator();
+            List<RefrigeratorModel> result = await _scrapService.GetMediaGalaxyRefrigerator();
 
-                if (result == null || result.Count == 0)
-                {
-                    return NotFound("No products found.");
-                }
-
-                return Ok(result);
-            }
-            catch (Exception ex)
+            if (result == null || result.Count == 0)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return NotFound("No products found.");
             }
+
+            return Ok(result);
         }
     }
 }
