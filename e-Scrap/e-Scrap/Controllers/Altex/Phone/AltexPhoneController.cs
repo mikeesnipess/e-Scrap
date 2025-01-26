@@ -5,7 +5,7 @@ using Services.Altex.Phone;
 namespace eScrap.Controllers.Altex.Phone
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/altex")]
     public class AltexPhoneController : ControllerBase
     {
         private readonly IAltexPhoneService _scrapService;
@@ -17,7 +17,7 @@ namespace eScrap.Controllers.Altex.Phone
             _context = context;
         }
 
-        [HttpGet("ScrapeAltexPhone")]
+        [HttpGet("phone")]
         public async Task<ActionResult<List<PhoneModel>>> ScrapPhoneProducts()
         {
             try

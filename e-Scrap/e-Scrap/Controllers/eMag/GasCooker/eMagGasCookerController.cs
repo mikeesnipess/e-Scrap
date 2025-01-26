@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Services.eMag.GasCoooker;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/emag")]
 public class eMagGasCookerController : ControllerBase
 {
     private readonly IEmagGasCookerService _scrapService;
@@ -15,7 +15,7 @@ public class eMagGasCookerController : ControllerBase
         _scrapService = scrapService;
     }
 
-    [HttpGet("eMagGasCooker")]
+    [HttpGet("gas-cooker")]
     public async Task<ActionResult<List<GasCookerModel>>> ScrapGasCookerProducts()
     {
         try
@@ -35,7 +35,7 @@ public class eMagGasCookerController : ControllerBase
         }
     }
 
-    [HttpGet("eMagGasCookerEmbbeded")]
+    [HttpGet("gas-cooker-embedded")]
     public async Task<ActionResult<List<GasCookerModel>>> ScrapeGasCoookerEmbeddedProducts()
     {
         try
@@ -55,7 +55,7 @@ public class eMagGasCookerController : ControllerBase
     }
 
 
-    [HttpGet("eMagOvenEmbbeded")]
+    [HttpGet("oven-embedded")]
     public async Task<ActionResult<List<GasCookerModel>>> ScrapeOvenEmbeddedProducts()
     {
         try
@@ -74,7 +74,7 @@ public class eMagGasCookerController : ControllerBase
         }
     }
 
-    [HttpGet("eMagHood")]
+    [HttpGet("hood")]
     public async Task<ActionResult<List<GasCookerModel>>> ScrapeHoodProducts()
     {
         try

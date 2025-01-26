@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace eScrap.Controllers.eMag.Phone
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/emag")]
     public class eMagPhoneController : ControllerBase
     {
         private readonly IEmagPhoneService _emagPhoneService;
@@ -17,7 +17,7 @@ namespace eScrap.Controllers.eMag.Phone
             _context = context;
         }
 
-        [HttpGet("ScrapeEmagPhone")]
+        [HttpGet("phone")]
         public async Task<ActionResult<List<PhoneModel>>> ScrapePhoneProducts()
         {
             try

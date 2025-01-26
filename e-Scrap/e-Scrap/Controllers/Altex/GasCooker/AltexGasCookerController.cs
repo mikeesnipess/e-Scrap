@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Services.Altex.GasCooker;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/altex")]
 public class AltexGasCookerController : ControllerBase
 {
     private readonly IAltexGasCookerService _scrapService;
@@ -15,7 +15,7 @@ public class AltexGasCookerController : ControllerBase
         _scrapService = scrapService;
     }
 
-    [HttpGet("AltexGasCooker")]
+    [HttpGet("gas-cooker")]
     public async Task<ActionResult<List<GasCookerModel>>> ScrapGasCookerProducts()
     {
         try
@@ -35,7 +35,7 @@ public class AltexGasCookerController : ControllerBase
         }
     }
 
-    [HttpGet("AltexGasCookerEmbedded")]
+    [HttpGet("gas-cooker-embedded")]
     public async Task<ActionResult<List<GasCookerModel>>> ScrapeGasCookerEmbeddedProducts()
     {
         try
@@ -55,7 +55,7 @@ public class AltexGasCookerController : ControllerBase
         }
     }
 
-    [HttpGet("AltexOvenEmbedded")]
+    [HttpGet("oven-embedded")]
     public async Task<ActionResult<List<GasCookerModel>>> ScrapeAltexOvenEmbeddedProducts()
     {
         try
@@ -74,7 +74,7 @@ public class AltexGasCookerController : ControllerBase
         }
     }
 
-    [HttpGet("AltexHood")]
+    [HttpGet("hood")]
     public async Task<ActionResult<List<GasCookerModel>>> ScrapeAltexHoodProducts()
     {
         try

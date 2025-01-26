@@ -34,19 +34,19 @@
     
     private async Task<List<GasCookerModel>> GetAltexGasCookerEmbeddedProductsAsync(HttpClient client)
     {
-        var endpoint = "AltexGasCooker/AltexGasCookerEmbedded";
+        var endpoint = "api/altex/gas-cooker-embedded";
         return await _getData.GetDataAsync<GasCookerModel>(client, endpoint);
     }
 
     private async Task<List<GasCookerModel>> GetEmagGasCookerEmbeddedProductsAsync(HttpClient client)
     {
-        var endpoint = "eMagGasCooker/eMagGasCookerEmbbeded";
+        var endpoint = "api/emag/gas-cooker-embedded";
         return await _getData.GetDataAsync<GasCookerModel>(client, endpoint);
     }
 
     private async Task<List<GasCookerModel>> GetMediaGalaxyGasCookerEmbeddedProductsAsync(HttpClient client)
     {
-        var endpoint = "MediaGalaxyGasCooker/MediaGalaxyGasCookerEmbedded";
+        var endpoint = "api/media-galaxy/gas-cooker-embedded";
         return await _getData.GetDataAsync<GasCookerModel>(client, endpoint);
     }
 

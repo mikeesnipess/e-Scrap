@@ -4,7 +4,7 @@ using Models.Ultra;
 namespace Controllers.Ultra
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/ultra")]
     public class UltraScrapingController : ControllerBase
     {
         private readonly UltraMdRefrigeratorService _scrapService;
@@ -14,7 +14,7 @@ namespace Controllers.Ultra
             _scrapService = scrapService;
         }
 
-        [HttpGet("ScrapeRefrigeratorUltraProducts")]
+        [HttpGet("refrigerator")]
         public async Task<IActionResult> ScrapeProducts(int page = 1)
         {
             try

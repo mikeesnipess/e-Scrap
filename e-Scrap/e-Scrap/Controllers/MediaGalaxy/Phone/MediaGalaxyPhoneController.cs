@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace eScrap.Controllers.MediaGalaxy.Phone
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/media-galaxy")]
     public class MediaGalaxyPhoneController : ControllerBase
     {
         private readonly IMediaGalaxyPhoneService _scrapService;
@@ -17,7 +17,7 @@ namespace eScrap.Controllers.MediaGalaxy.Phone
             _context = context;
         }
 
-        [HttpGet("ScrapeMediaGalaxyPhone")]
+        [HttpGet("phone")]
         public async Task<ActionResult<List<PhoneModel>>> ScrapPhoneProducts()
         {
             try

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace eScrap.Controllers.Altex.Laptop
 {
     [ApiController]
-    [Route("api/altex/laptop")]
+    [Route("api/altex")]
     public class AltexLaptopController : ControllerBase
     {
         private readonly IAltexLaptopService _scrapService;
@@ -17,7 +17,7 @@ namespace eScrap.Controllers.Altex.Laptop
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet("laptop")]
         public async Task<ActionResult<List<LaptopModel>>> ScrapLaptopProducts()
         {
             try

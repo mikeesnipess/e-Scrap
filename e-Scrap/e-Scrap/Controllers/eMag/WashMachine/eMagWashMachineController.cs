@@ -5,7 +5,7 @@ using Services.eMag.WashMachine;
 namespace Controllers.eMag.WashMachine
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/emag")]
     public class eMagWashMachineController : ControllerBase
     {
         private readonly IEmagWashMachineService _scrapService;
@@ -17,7 +17,7 @@ namespace Controllers.eMag.WashMachine
             _context = context;
         }
 
-        [HttpGet("ScrapeEMagWashMachine")]
+        [HttpGet("wash-machine")]
         public async Task<ActionResult<List<WashMachineModel>>> ScrapGasCookerProducts()
         {
             try
