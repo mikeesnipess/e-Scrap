@@ -11,12 +11,12 @@
 @inject ProductPage<GasCookerModel> _getData;
 
 
-<div>
-    <label for="isEmbedded">
-        Show only Embedded Gas Cooker?
-        <input type="checkbox" id="verifyActivity" @bind="IsOnlyEmbedded" @bind:event="onchange" />
-    </label>
-</div>
+@* <div> *@
+@*     <label for="isEmbedded"> *@
+@*         Show only Embedded Gas Cooker? *@
+@*         <input type="checkbox" id="verifyActivity" @bind="IsOnlyEmbedded" @bind:event="onchange" /> *@
+@*     </label> *@
+@* </div> *@
 
 @if (!verifyEmbedded)
 {
@@ -59,37 +59,37 @@ else
     #region ShopAPI
     private async Task<List<GasCookerModel>> GetAltexGasCookerProductsAsync(HttpClient client)
     {
-        var endpoint = "AltexGasCooker/AltexGasCooker";
+        var endpoint = "api/altex/gas-cooker";
         return await _getData.GetDataAsync<GasCookerModel>(client, endpoint);
     }
 
     private async Task<List<GasCookerModel>> GetAltexGasCookerEmbeddedProductsAsync(HttpClient client)
     {
-        var endpoint = "AltexGasCooker/AltexGasCookerEmbedded";
+        var endpoint = "api/altex/gas-cooker-embedded";
         return await _getData.GetDataAsync<GasCookerModel>(client, endpoint);
     }
 
     private async Task<List<GasCookerModel>> GetAltexOvenEmbeddedProductsAsync(HttpClient client)
     {
-        var endpoint = "AltexGasCooker/AltexOvenEmbedded";
+        var endpoint = "api/altex/oven-embedded";
         return await _getData.GetDataAsync<GasCookerModel>(client, endpoint);
     }
 
     private async Task<List<GasCookerModel>> GetAltexHoodProductsAsync(HttpClient client)
     {
-        var endpoint = "AltexGasCooker/AltexHood";
+        var endpoint = "api/altex/hood";
         return await _getData.GetDataAsync<GasCookerModel>(client, endpoint);
     }
 
     private async Task<List<GasCookerModel>> GetEMaGasCookerProductsAsync(HttpClient client)
     {
-        var endpoint = "eMagGasCooker/eMagGasCooker";
+        var endpoint = "api/emag/gas-cooker";
         return await _getData.GetDataAsync<GasCookerModel>(client, endpoint);
     }
 
     private async Task<List<GasCookerModel>> GetMediaGalaxyGasCookerProductsAsync(HttpClient client)
     {
-        var endpoint = "MediaGalaxyGasCooker/MediaGalaxyGasCooker";
+        var endpoint = "api/media-galaxy/gas-cooker";
         return await _getData.GetDataAsync<GasCookerModel>(client, endpoint);
     }
     #endregion

@@ -5,7 +5,7 @@ using Services.MediaGalaxy.WashMachine;
 namespace Controllers.MediaGalaxy.WashMachine
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/media-galaxy")]
     public class MediaGalaxyWashMachineController : ControllerBase
     {
         private readonly IMediaGalaxyWashMachineService _scrapService;
@@ -17,7 +17,7 @@ namespace Controllers.MediaGalaxy.WashMachine
             _context = context;
         }
 
-        [HttpGet("ScrapeWashMachineMediaGalaxyProducts")]
+        [HttpGet("wash-machine")]
         public async Task<ActionResult<List<WashMachineModel>>> ScrapeRefrigeratorProducts()
         {
             try

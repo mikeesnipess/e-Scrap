@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace eScrap.Controllers.MediaGalaxy.Laptop
 {
     [ApiController]
-    [Route("api/media-galaxy/laptop")]
+    [Route("api/media-galaxy")]
     public class MediaGalaxyLaptopController : ControllerBase
     {
         private readonly IMediaGalaxyLaptopService _scrapService;
@@ -17,7 +17,7 @@ namespace eScrap.Controllers.MediaGalaxy.Laptop
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet("laptop")]
         public async Task<ActionResult<List<LaptopModel>>> ScrapLaptopProducts()
         {
             try

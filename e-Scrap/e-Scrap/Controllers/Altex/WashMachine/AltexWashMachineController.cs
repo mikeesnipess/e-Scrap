@@ -5,7 +5,7 @@ using Services.Altex.WashMachine;
 namespace Controllers.Altex.WashMachine
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/altex")]
     public class AltexWashMachineController : ControllerBase
     {
         private readonly IAltexWashMachineService _scrapService;
@@ -16,7 +16,7 @@ namespace Controllers.Altex.WashMachine
             _context = context;
         }
 
-        [HttpGet("ScrapeAltexWashMachine")]
+        [HttpGet("wash-machine")]
         public async Task<ActionResult<List<WashMachineModel>>> ScrapGasCookerProducts()
         {
             try

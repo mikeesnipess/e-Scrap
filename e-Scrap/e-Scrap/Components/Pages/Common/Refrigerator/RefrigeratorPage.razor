@@ -31,7 +31,7 @@
     #region ShopsAPI
     protected async Task<List<RefrigeratorModel>> GetAltexRefrigeratorProductsAsync(HttpClient client)
     {
-        var endpoint = "AltexRefrigerator/ScrapeRefrigeratorAltexProducts";
+        var endpoint = "api/altex/refrigerator";
         var products = await _getData.GetDataAsync<RefrigeratorModel>(client, endpoint);
 
         return products;
@@ -39,7 +39,7 @@
 
     protected async Task<List<RefrigeratorModel>> GetEMagRefrigeratorProductsAsync(HttpClient client)
     {
-        var endpoint = "eMagRefrigerator/eMagScrapeRefrigeratorProducts";
+        var endpoint = "api/emag/refrigerator";
         var products = await _getData.GetDataAsync<RefrigeratorModel>(client, endpoint);
 
         return products;
@@ -47,7 +47,7 @@
 
     protected async Task<List<RefrigeratorModel>> GetDedemanRefrigeratorProductsAsync(HttpClient client)
     {
-        var endpoint = "DedemanRefrigerator/ScrapeRefrigeratorDedemanProducts";
+        var endpoint = "api/dedeman/refrigerator";
         var products = await _getData.GetDataAsync<RefrigeratorModel>(client, endpoint);
 
         return products;
@@ -55,7 +55,7 @@
 
     protected async Task<List<RefrigeratorModel>> GetMediaGalaxyRefrigeratorProductsAsync(HttpClient client)
     {
-        var endpoint = "MediaGalaxyRefrigerator/ScrapeRefrigeratorMediaGalaxyProducts";
+        var endpoint = "api/media-galaxy/refrigerator";
         var products = await _getData.GetDataAsync<RefrigeratorModel>(client, endpoint);
 
         return products;

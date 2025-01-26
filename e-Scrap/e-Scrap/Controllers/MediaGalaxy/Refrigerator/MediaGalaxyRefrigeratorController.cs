@@ -6,7 +6,7 @@ namespace Controllers.MediaGalaxy.Refrigerator
 {
 
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/media-galaxy")]
     public class MediaGalaxyRefrigeratorController : ControllerBase
     {
         private readonly IMediaGalaxyRefrigeratorService _scrapService;
@@ -18,7 +18,7 @@ namespace Controllers.MediaGalaxy.Refrigerator
             _context = context;
         }
 
-        [HttpGet("ScrapeRefrigeratorMediaGalaxyProducts")]
+        [HttpGet("refrigerator")]
         public async Task<ActionResult<List<RefrigeratorModel>>> ScrapeRefrigeratorProducts()
         {
             try

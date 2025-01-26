@@ -30,7 +30,7 @@
 
     protected async Task<List<WashMachineModel>> GetAltexWashMachineProductAsync(HttpClient client)
     {
-        var endpoint = "AltexWashMachine/ScrapeAltexWashMachine";
+        var endpoint = "api/altex/wash-machine";
         var products = await _getData.GetDataAsync<WashMachineModel>(client, endpoint);
 
         return products;
@@ -38,7 +38,7 @@
 
     protected async Task<List<WashMachineModel>> GetEMagWashMachine(HttpClient client)
     {
-        var endpoint = "eMagWashMachine/ScrapeEMagWashMachine";
+        var endpoint = "api/emag/wash-machine";
         var products = await _getData.GetDataAsync<WashMachineModel>(client, endpoint);
 
         return products;
@@ -46,7 +46,7 @@
 
     protected async Task<List<WashMachineModel>> GetMediaGalaxyWashMachine(HttpClient client)
     {
-        var endpoint = "MediaGalaxyWashMachine/ScrapeWashMachineMediaGalaxyProducts";
+        var endpoint = "api/media-galaxy/wash-machine";
         var products = await _getData.GetDataAsync<WashMachineModel>(client, endpoint);
 
         return products;

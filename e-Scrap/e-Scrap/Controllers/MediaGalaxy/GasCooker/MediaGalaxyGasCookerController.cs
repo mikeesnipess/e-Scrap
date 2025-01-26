@@ -5,7 +5,7 @@ using Services.MediaGalaxy.GasCooker;
 namespace Controllers.MediaGalaxy.GasCooker
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/media-galaxy")]
     public class MediaGalaxyGasCookerController : ControllerBase
     {
         private readonly IMediaGalaxyGasCookerService _scrapService;
@@ -17,7 +17,7 @@ namespace Controllers.MediaGalaxy.GasCooker
             _context = context;
         }
 
-        [HttpGet("MediaGalaxyGasCooker")]
+        [HttpGet("gas-cooker")]
         public async Task<ActionResult<List<GasCookerModel>>> ScrapeGasCookerProducts()
         {
             try
@@ -37,7 +37,7 @@ namespace Controllers.MediaGalaxy.GasCooker
             }
         }
 
-        [HttpGet("MediaGalaxyGasCookerEmbedded")]
+        [HttpGet("gas-cooker-embedded")]
         public async Task<ActionResult<List<GasCookerModel>>> GasCookerMediaGalaxyEmbedded()
         {
             try
@@ -57,7 +57,7 @@ namespace Controllers.MediaGalaxy.GasCooker
             }
         }
 
-        [HttpGet("MediaGalaxyOvenEmbedded")]
+        [HttpGet("oven-embedded")]
         public async Task<ActionResult<List<GasCookerModel>>> OvenMediaGalaxyEmbedded()
         {
             try
@@ -77,7 +77,7 @@ namespace Controllers.MediaGalaxy.GasCooker
             }
         }
 
-        [HttpGet("MediaGalaxyHood")]
+        [HttpGet("hood")]
         public async Task<ActionResult<List<GasCookerModel>>> MediaGalaxyHood()
         {
             try

@@ -28,7 +28,7 @@
     #region ShopsAPI
     protected async Task<List<PhoneModel>> GetAltexPhoneProductsAsync(HttpClient client)
     {
-        var endpoint = "AltexPhone/ScrapeAltexPhone";
+        var endpoint = "api/altex/phone";
         var products = await _getData.GetDataAsync<PhoneModel>(client, endpoint);
 
         return products;
@@ -37,7 +37,7 @@
 
     protected async Task<List<PhoneModel>> GetMediaGalaxyPhoneProductsAsync(HttpClient client)
     {
-        var endpoint = "MediaGalaxyPhone/ScrapeMediaGalaxyPhone";
+        var endpoint = "api/media-galaxy/phone";
         var products = await _getData.GetDataAsync<PhoneModel>(client, endpoint);
 
         return products;
@@ -45,7 +45,7 @@
 
     protected async Task<List<PhoneModel>> GetEmagPhoneProductsAsync(HttpClient client)
     {
-        var endpoint = "eMagPhone/ScrapeEmagPhone";
+        var endpoint = "api/emag/phone";
         var products = await _getData.GetDataAsync<PhoneModel>(client, endpoint);
 
         return products;

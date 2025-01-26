@@ -5,7 +5,7 @@ using Services.Dedeman.Refrigerator;
 namespace Controllers.Dedeman.Refrigerator
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/dedeman")]
     public class DedemanRefrigeratorController : ControllerBase
     {
         private readonly IDedemanRefrigeratorService _scrapService;
@@ -17,7 +17,7 @@ namespace Controllers.Dedeman.Refrigerator
             _context = context;
         }
 
-        [HttpGet("ScrapeRefrigeratorDedemanProducts")]
+        [HttpGet("refrigerator")]
         public async Task<ActionResult<List<RefrigeratorModel>>> ScrapeRefrigeratorProducts()
         {
             try

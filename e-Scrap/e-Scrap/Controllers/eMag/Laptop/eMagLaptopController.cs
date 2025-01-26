@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace eScrap.Controllers.eMag.Laptop
 {
     [ApiController]
-    [Route("api/emag/laptop")]
+    [Route("api/emag")]
     public class eMagLaptopController : ControllerBase
     {
         private readonly IEmagLaptopService _scrapService;
@@ -17,7 +17,7 @@ namespace eScrap.Controllers.eMag.Laptop
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet("laptop")]
         public async Task<ActionResult<List<LaptopModel>>> ScrapLaptopProducts()
         {
             try

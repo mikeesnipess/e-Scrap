@@ -5,7 +5,7 @@ using Services.Altex.Refrigerator;
 namespace Controllers.Altex.Refrigerator
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/altex")]
     public class AltexRefrigeratorController : ControllerBase
     {
         private readonly IAltexRefrigeratorService _scrapService;
@@ -17,7 +17,7 @@ namespace Controllers.Altex.Refrigerator
             _context = context;
         }
 
-        [HttpGet("ScrapeRefrigeratorAltexProducts")]
+        [HttpGet("refrigerator")]
         public async Task<ActionResult<List<RefrigeratorModel>>> ScrapeRefrigeratorProducts()
         {
             try

@@ -3,7 +3,7 @@ using Models.Common.Refrigerator;
 using Services.eMag.Refrigerator;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/emag")]
 public class eMagRefrigeratorController : ControllerBase
 {
     private readonly IEmagRefrigeratorService _scrapService;
@@ -15,7 +15,7 @@ public class eMagRefrigeratorController : ControllerBase
         _scrapService = scrapService;
     }
 
-    [HttpGet("eMagScrapeRefrigeratorProducts")]
+    [HttpGet("refrigerator")]
     public async Task<ActionResult<List<RefrigeratorModel>>> ScrapRefrigeratorProducts()
     {
         try
