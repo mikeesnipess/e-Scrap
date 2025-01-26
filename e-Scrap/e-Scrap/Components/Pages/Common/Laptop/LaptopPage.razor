@@ -1,0 +1,56 @@
+﻿@page "/laptops"
+@using eScrap.Models.Common.Laptop
+@using e_Scrap.Models.Common.Phone
+
+
+@inject HttpClient Http
+@inject IHttpClientFactory HttpClientFactory
+@inject IJSRuntime JS
+@inject ProductPage<LaptopModel> _getData;
+
+
+<ProductPage TProduct="LaptopModel" Products="@LaptopProducts" />
+
+@code {
+    private bool loading = true;
+    private List<LaptopModel> LaptopProducts = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        loading = true;
+        var client = HttpClientFactory.CreateClient("API");
+        LaptopProducts = await GetAltexPhoneProductsAsync(client);
+        LaptopProducts.AddRange(await GetMediaGalaxyPhoneProductsAsync(client));
+        LaptopProducts.AddRange(await GetEmagPhoneProductsAsync(client));
+        loading = false;
+        StateHasChanged();
+    }
+
+    #region ShopsAPI
+    protected async Task<List<LaptopModel>> GetAltexPhoneProductsAsync(HttpClient client)
+    {
+        var endpoint = "api/altex/laptop";
+        var products = await _getData.GetDataAsync<LaptopModel>(client, endpoint);
+
+        return products;
+    }
+
+
+    protected async Task<List<LaptopModel>> GetMediaGalaxyPhoneProductsAsync(HttpClient client)
+    {
+        var endpoint = "api/media-galaxy/laptop";
+        var products = await _getData.GetDataAsync<LaptopModel>(client, endpoint);
+
+        return products;
+    }
+
+    protected async Task<List<LaptopModel>> GetEmagPhoneProductsAsync(HttpClient client)
+    {
+        var endpoint = "api/emag/laptop";
+        var products = await _getData.GetDataAsync<LaptopModel>(client, endpoint);
+
+        return products;
+    }
+    #endregion
+
+}

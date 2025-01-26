@@ -1,4 +1,4 @@
-﻿using Controllers.Altex;
+﻿using Controllers.Altex.Refrigerator;
 using FakeItEasy;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;

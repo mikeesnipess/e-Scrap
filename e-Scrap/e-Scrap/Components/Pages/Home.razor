@@ -3,26 +3,49 @@
 <PageTitle>Home</PageTitle>
 
 <div class="product-list">
+    <h3 class="category-heading">Mobila</h3>
+    @* <hr class="category-divider" /> *@
+    <div class="category-items">
+        @foreach (var category in HouseMobileCategory)
+        {
+            <a href="@category.Value" target="_self" rel="noopener noreferrer" class="product-link">
+                <div class="product-card">
+                    <p><strong>@category.Key</strong></p>
+                </div>
+            </a>
+        }
+    </div>
 
-    @foreach (var category in Category)
-    {
-        <div class="product-card">
-            <p><strong>@category.Key</strong></p>
-            <a href="@category.Value" target="_self" rel="noopener noreferrer">Mergi la @category.Key</a>
-        </div>
-    }
+    <hr class="category-divider" />
+
+    <h3 class="category-heading">Tehnologie</h3>
+    @* <hr class="category-divider" /> *@
+    <div class="category-items">
+        @foreach (var category in TechnologyCategory)
+        {
+            <a href="@category.Value" target="_self" rel="noopener noreferrer" class="product-link">
+                <div class="product-card">
+                    <p><strong>@category.Key</strong></p>
+                </div>
+            </a>
+        }
+    </div>
 </div>
 
 @code
 {
-    Dictionary<string, string> Category = new();
+    Dictionary<string, string> HouseMobileCategory = new();
+    Dictionary<string, string> TechnologyCategory = new();
     protected override async Task OnInitializedAsync()
     {
-        Category.Add("Frigidere", "/refrigerator");
-        Category.Add("Aragazuri", "/gas-cooker");
-        Category.Add("Plite incorporabile", "/gas-cooker-embedded");
-        Category.Add("Cuptor", "/oven");
-        Category.Add("Hote", "/hood");
-        Category.Add("Masini de spalat", "/wash-machine");
+        HouseMobileCategory.Add("Frigidere", "/refrigerator");
+        HouseMobileCategory.Add("Aragazuri", "/gas-cooker");
+        HouseMobileCategory.Add("Plite incorporabile", "/gas-cooker-embedded");
+        HouseMobileCategory.Add("Cuptor", "/oven");
+        HouseMobileCategory.Add("Hote", "/hood");
+        HouseMobileCategory.Add("Masini de spalat", "/wash-machine");
+
+        TechnologyCategory.Add("Telefoane", "/phones");
+        TechnologyCategory.Add("Laptopuri", "/laptops");
     }
 }
