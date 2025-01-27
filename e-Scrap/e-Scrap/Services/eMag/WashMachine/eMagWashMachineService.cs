@@ -1,38 +1,24 @@
-﻿using e_crap.Models.Common.WashMachine;
-using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using e_crap.Models.Common.WashMachine;
+using eScrap.Repository;
 
 namespace Services.eMag.WashMachine
 {
     public class eMagWashMachineService : IEmagWashMachineService
     {
-        private readonly IAppSettingsDbContext _context;
-        public eMagWashMachineService(IAppSettingsDbContext context)
+        private readonly IEMagWashMachineRepository _eMagWashMachineRepository;
+        private readonly IMapper _mapper;
+
+        public eMagWashMachineService(IEMagWashMachineRepository eMagWashMachineRepository, IMapper mapper)
         {
-            _context = context;
+            _eMagWashMachineRepository = eMagWashMachineRepository;
+            _mapper = mapper;
         }
 
         public async Task<List<WashMachineModel>> GetWashMachineEMag()
         {
-            var resultProducts = await _context.eMagWashMachine
-                .Select(r => new WashMachineModel
-                {
-                    Id = r.Id,
-                    Name = r.Name,
-                    StandardPrice = r.StandardPrice,
-                    DiscountPrice = r.DiscountPrice,
-                    DiscountPercentage = r.DiscountPercentage,
-                    ShopId = r.ShopId,
-                    LinkUrl = r.LinkUrl,
-                    ProductDescription = r.ProductDescription,
-                    CountryId = r.CountryId,
-                    ProductType = r.ProductType,
-                    ImageSmallUrl = r.ImageSmallUrl,
-                    BrandName = r.BrandName,
-
-                })
-                .ToListAsync();
-
-            return resultProducts;
+            var resultProducts = await _eMagWashMachineRepository.GetAllProductsAsync();
+            return _mapper.Map<List<WashMachineModel>>(resultProducts);
         }
     }
 }

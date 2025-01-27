@@ -28,7 +28,7 @@ public class AppSettingsDbContext : DbContext, IAppSettingsDbContext
     public DbSet<AltexHood> AltexHood{ get; private set; }
     public DbSet<AltexWashMachine> AltexWashMachine { get; private set; }
     public DbSet<AltexPhones> AltexPhones { get; private set; }
-    public DbSet<AltexLaptop> AltexLaptop{ get; private set; }
+    public DbSet<AltexLaptop> AltexLaptop{ get; set; }
     public DbSet<eMagGasCooker> eMagGasCooker { get; private set; }
     public DbSet<eMagGasCookerEmbedded> eMagGasCookerEmbedded { get; private set; }
     public DbSet<eMagOvenEmbedded> eMagOvenEmbedded { get; private set; }

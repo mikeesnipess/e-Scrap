@@ -1,39 +1,24 @@
-﻿using e_crap.Models.Common.WashMachine;
-using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using e_crap.Models.Common.WashMachine;
+using eScrap.Repository;
 
 namespace Services.Altex.WashMachine
 {
     public class AltexWashMachineService : IAltexWashMachineService
     {
-        private readonly IAppSettingsDbContext _context;
+        private readonly IAltexWashMachineRepository _washMachineRepository;
+        private readonly IMapper _mapper;
 
-        public AltexWashMachineService(IAppSettingsDbContext context)
+        public AltexWashMachineService(IAltexWashMachineRepository washMachineRepository, IMapper mapper)
         {
-            _context = context;
+            _washMachineRepository = washMachineRepository;
+            _mapper = mapper;
         }
 
         public async Task<List<WashMachineModel>> GetAltexWashMachine()
         {
-            var resultProducts = await _context.AltexWashMachine
-                .Select(r => new WashMachineModel
-                {
-                    Id = r.Id,
-                    Name = r.Name,
-                    StandardPrice = r.StandardPrice,
-                    DiscountPrice = r.DiscountPrice,
-                    DiscountPercentage = r.DiscountPercentage,
-                    ShopId = r.ShopId,
-                    LinkUrl = r.LinkUrl,
-                    ProductDescription = r.ProductDescription,
-                    CountryId = r.CountryId,
-                    ProductType = r.ProductType,
-                    ImageSmallUrl = r.ImageSmallUrl,
-                    BrandName = r.BrandName,
-
-                })
-                .ToListAsync();
-
-            return resultProducts;
+            var resultProducts = await _washMachineRepository.GetAllProductsAsync();
+            return _mapper.Map<List<WashMachineModel>>(resultProducts);
         }
     }
 }

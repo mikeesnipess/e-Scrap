@@ -1,5 +1,4 @@
-﻿using e_Scrap.Models.Common.Phone;
-using eScrap.Models.Common.Laptop;
+﻿using eScrap.Models.Common.Laptop;
 
 namespace eScrap.Services.Altex.Laptop
 {

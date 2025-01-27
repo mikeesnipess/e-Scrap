@@ -1,106 +1,48 @@
-﻿using e_Scrap.Models.Common.GasCooker;
-using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using e_Scrap.Models.Common.GasCooker;
+using eScrap.Repository;
 using Services.Altex.GasCooker;
 
 public class AltexGasCookerService : IAltexGasCookerService
 {
-    private readonly IAppSettingsDbContext _context;
+    private readonly IAltexGasCookerRepository _altexGasCookerRepository;
+    private readonly IAltexGasCookerEmbeddedRepository _altexGasCookerEmbeddedRepository;
+    private readonly IAltexOvenEmbeddedRepository _altexOvenEmbeddedRepository;
+    private readonly IAltexOvenEmbeddedRepository _altexHoodRepository;
+    private readonly IMapper _mapper;
 
-    public AltexGasCookerService(IAppSettingsDbContext context)
+    public AltexGasCookerService(IAltexGasCookerRepository altexGasCookerRepository, IMapper mapper, IAltexGasCookerEmbeddedRepository altexGasCookerEmbeddedRepository, IAltexOvenEmbeddedRepository altexOvenEmbeddedRepository, IAltexOvenEmbeddedRepository altexHoodRepository)
     {
-        _context = context;
+        _altexGasCookerRepository = altexGasCookerRepository;
+        _altexGasCookerEmbeddedRepository = altexGasCookerEmbeddedRepository;
+        _altexOvenEmbeddedRepository = altexOvenEmbeddedRepository;
+        _altexHoodRepository = altexHoodRepository;
+        _mapper = mapper;
     }
 
     public async Task<List<GasCookerModel>> GetGasCookerAltex()
     {
-        var resultProducts = await _context.AltexGasCooker
-            .Select(r => new GasCookerModel
-            {
-                Id = r.Id,
-                Name = r.Name,
-                StandardPrice = r.StandardPrice,
-                DiscountPrice = r.DiscountPrice,
-                DiscountPercentage = r.DiscountPercentage,
-                ShopId = r.ShopId,
-                LinkUrl = r.LinkUrl,
-                ProductDescription = r.ProductDescription,
-                CountryId = r.CountryId,
-                ProductType = r.ProductType,
-                ImageSmallUrl = r.ImageSmallUrl,
-                BrandName = r.BrandName,
-            })
-            .ToListAsync();
-
-        return resultProducts;
+        var resultProducts = await _altexGasCookerRepository.GetAllProductsAsync();
+        return _mapper.Map<List<GasCookerModel>>(resultProducts);
     }
 
     public async Task<List<GasCookerModel>> GetGasCookerEmbeddedAltex()
     {
-        var resultProducts = await _context.AltexGasCookerEmbedded
-            .Select(r => new GasCookerModel
-            {
-                Id = r.Id,
-                Name = r.Name,
-                StandardPrice = r.StandardPrice,
-                DiscountPrice = r.DiscountPrice,
-                DiscountPercentage = r.DiscountPercentage,
-                ShopId = r.ShopId,
-                LinkUrl = r.LinkUrl,
-                ProductDescription = r.ProductDescription,
-                CountryId = r.CountryId,
-                ProductType = r.ProductType,
-                ImageSmallUrl = r.ImageSmallUrl,
-                BrandName = r.BrandName,
-            })
-            .ToListAsync();
-
-        return resultProducts;
+        var resultProducts = await _altexGasCookerEmbeddedRepository.GetAllProductsAsync();
+        return _mapper.Map<List<GasCookerModel>>(resultProducts);
     }
 
     public async Task<List<GasCookerModel>> GetOvenEmbeddedAltex()
     {
-        var resultProducts = await _context.AltexOvenEmbedded
-            .Select(r => new GasCookerModel
-            {
-                Id = r.Id,
-                Name = r.Name,
-                StandardPrice = r.StandardPrice,
-                DiscountPrice = r.DiscountPrice,
-                DiscountPercentage = r.DiscountPercentage,
-                ShopId = r.ShopId,
-                LinkUrl = r.LinkUrl,
-                ProductDescription = r.ProductDescription,
-                CountryId = r.CountryId,
-                ProductType = r.ProductType,
-                ImageSmallUrl = r.ImageSmallUrl,
-                BrandName = r.BrandName,
-            })
-            .ToListAsync();
-
-        return resultProducts;
+        var resultProducts = await _altexOvenEmbeddedRepository.GetAllProductsAsync();
+        return _mapper.Map<List<GasCookerModel>>(resultProducts);
     }
 
     public async Task<List<GasCookerModel>> GetHoodAltex()
     {
-        var resultProducts = await _context.AltexHood
-            .Select(r => new GasCookerModel
-            {
-                Id = r.Id,
-                Name = r.Name,
-                StandardPrice = r.StandardPrice,
-                DiscountPrice = r.DiscountPrice,
-                DiscountPercentage = r.DiscountPercentage,
-                ShopId = r.ShopId,
-                LinkUrl = r.LinkUrl,
-                ProductDescription = r.ProductDescription,
-                CountryId = r.CountryId,
-                ProductType = r.ProductType,
-                ImageSmallUrl = r.ImageSmallUrl,
-                BrandName = r.BrandName,
-            })
-            .ToListAsync();
+        var resultProducts = await _altexHoodRepository.GetAllProductsAsync();
+        return _mapper.Map<List<GasCookerModel>>(resultProducts);
 
-        return resultProducts;
     }
 }
 

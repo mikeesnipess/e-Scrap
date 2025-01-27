@@ -1,39 +1,24 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using eScrap.Repository;
 using Models.Common.Refrigerator;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Services.Altex.Refrigerator
 {
     public class AltexRefrigeratorService : IAltexRefrigeratorService
     {
-        private readonly IAppSettingsDbContext _context;
-        public AltexRefrigeratorService(IAppSettingsDbContext context)
+        private readonly IAltexRefrigeratorRepository _refrigeratorRepository;
+        private readonly IMapper _mapper;
+
+        public AltexRefrigeratorService(IAltexRefrigeratorRepository refrigeratorRepository, IMapper mapper)
         {
-            _context = context;
+            _refrigeratorRepository = refrigeratorRepository;
+            _mapper = mapper;
         }
 
         public async Task<List<RefrigeratorModel>> GetAltexRefrigerator()
         {
-            var resultProducts = await _context.AltexRefrigerator
-                .Select(r => new RefrigeratorModel
-                {
-                    Id = r.Id,
-                    Name = r.Name,
-                    StandardPrice = r.StandardPrice,
-                    DiscountPrice = r.DiscountPrice,
-                    DiscountPercentage = r.DiscountPercentage,
-                    ShopId = r.ShopId,
-                    LinkUrl = r.LinkUrl,
-                    ProductDescription = r.ProductDescription,
-                    CountryId = r.CountryId,
-                    ProductType = r.ProductType,
-                    ImageSmallUrl = r.ImageSmallUrl,
-                    BrandName = r.BrandName,
-                })
-                .ToListAsync();
-
-            return resultProducts;
+            var resultProducts = await _refrigeratorRepository.GetAllProductsAsync();
+            return _mapper.Map<List<RefrigeratorModel>>(resultProducts);
         }
     }
 }

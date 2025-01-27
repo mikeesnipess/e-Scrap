@@ -127,10 +127,26 @@ else
 
     public async Task<List<T>> GetDataAsync<T>(HttpClient client, string endpoint) where T : class
     {
+        try
+        {
+            Console.WriteLine($"Making request to: {client.BaseAddress}{endpoint}");
             var response = await client.GetAsync(endpoint);
+
+            response.EnsureSuccessStatusCode();
 
             var data = await response.Content.ReadFromJsonAsync<List<T>>();
             return data ?? new List<T>();
+        }
+        catch (HttpRequestException httpEx)
+        {
+            Console.WriteLine($"HTTP Error: {httpEx.Message}");
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unexpected Error: {ex.Message}");
+            throw;
+        }
     }
 
 

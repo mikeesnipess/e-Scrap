@@ -1,39 +1,24 @@
-﻿using eScrap.Models.Common.Laptop;
-using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using eScrap.Models.Common.Laptop;
+using eScrap.Repository;
 
 namespace eScrap.Services.eMag.Laptop
 {
     public class eMagLaptopService : IEmagLaptopService
     {
-        private readonly IAppSettingsDbContext _context;
+        private readonly IEMagLaptopRepository _eMagLaptopRepository;
+        private readonly IMapper _mapper;
 
-        public eMagLaptopService(IAppSettingsDbContext context)
+        public eMagLaptopService(IEMagLaptopRepository eMagLaptopRepository, IMapper mapper)
         {
-            _context = context;
+            _eMagLaptopRepository = eMagLaptopRepository;
+            _mapper = mapper;
         }
 
         public async Task<List<LaptopModel>> GetEmagLaptop()
         {
-            var resultProducts = await _context.eMagLaptop
-                 .Select(r => new LaptopModel
-                 {
-                     Id = r.Id,
-                     ProductId = r.ProductId,
-                     Name = r.Name,
-                     StandardPrice = r.StandardPrice,
-                     DiscountPrice = r.DiscountPrice,
-                     DiscountPercentage = r.DiscountPercentage,
-                     ShopId = r.ShopId,
-                     LinkUrl = r.LinkUrl,
-                     ProductDescription = r.ProductDescription,
-                     CountryId = r.CountryId,
-                     ProductType = r.ProductType,
-                     ImageSmallUrl = r.ImageSmallUrl,
-                     BrandName = r.BrandName,
-                 })
-                 .ToListAsync();
-
-            return resultProducts;
+            var resultProducts = await _eMagLaptopRepository.GetAllProductsAsync();
+            return _mapper.Map<List<LaptopModel>>(resultProducts);
         }
     }
 }
