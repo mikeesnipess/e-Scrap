@@ -1,39 +1,23 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using eScrap.Repository;
 using Models.Common.Refrigerator;
 
 namespace Services.MediaGalaxy.Refrigerator
 {
     public class MediaGalaxyRefrigeratorService : IMediaGalaxyRefrigeratorService
     {
-        private readonly IAppSettingsDbContext _context;
-
-        public MediaGalaxyRefrigeratorService(IAppSettingsDbContext context)
+        private readonly IMediaGalaxyRefrigeratorRepository _mediaGalaxyRefrigeratorRepository;
+        private readonly IMapper _mapper;
+        public MediaGalaxyRefrigeratorService(IMediaGalaxyRefrigeratorRepository mediaGalaxyRefrigeratorRepository, IMapper mapper)
         {
-            _context = context;
+            _mediaGalaxyRefrigeratorRepository = mediaGalaxyRefrigeratorRepository;
+            _mapper = mapper;
         }
 
         public async Task<List<RefrigeratorModel>> GetMediaGalaxyRefrigerator()
         {
-            var resultProducts = await _context.MediaGalaxyRefrigerator
-                .Select(r => new RefrigeratorModel
-                {
-                    Id = r.Id,
-                    Name = r.Name,
-                    StandardPrice = r.StandardPrice,
-                    DiscountPrice = r.DiscountPrice,
-                    DiscountPercentage = r.DiscountPercentage,
-                    ShopId = r.ShopId,
-                    LinkUrl = r.LinkUrl,
-                    ProductDescription = r.ProductDescription,
-                    CountryId = r.CountryId,
-                    ProductType = r.ProductType,
-                    ImageSmallUrl = r.ImageSmallUrl,
-                    BrandName = r.BrandName,
-
-                })
-                .ToListAsync();
-
-            return resultProducts;
+            var resultProducts = await _mediaGalaxyRefrigeratorRepository.GetAllProductsAsync();
+            return _mapper.Map<List<RefrigeratorModel>>(resultProducts);
         }
     }
 }

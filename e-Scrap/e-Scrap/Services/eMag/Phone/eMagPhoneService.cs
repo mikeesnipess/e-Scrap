@@ -1,38 +1,25 @@
-﻿using e_Scrap.Models.Common.Phone;
-using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using e_Scrap.Models.Common.GasCooker;
+using e_Scrap.Models.Common.Phone;
+using eScrap.Repository;
 
 namespace eScrap.Services.eMag.Phone
 {
     public class eMagPhoneService : IEmagPhoneService
     {
-        private readonly IAppSettingsDbContext _context;
+        private readonly IEMagPhonesRepository _eMagPhonesRepository;
+        private readonly IMapper _mapper;
 
-        public eMagPhoneService(IAppSettingsDbContext context)
+        public eMagPhoneService(IEMagPhonesRepository eMagPhonesRepository, IMapper mapper)
         {
-            _context = context;
+            _eMagPhonesRepository = eMagPhonesRepository;
+            _mapper = mapper;
         }
 
         public async Task<List<PhoneModel>> GetEmagPhones()
         {
-            var resultProducts = await _context.eMagPhones
-                .Select(r => new PhoneModel
-                {
-                    Id = r.Id,
-                    Name = r.Name,
-                    StandardPrice = r.StandardPrice,
-                    DiscountPrice = r.DiscountPrice,
-                    DiscountPercentage = r.DiscountPercentage,
-                    ShopId = r.ShopId,
-                    LinkUrl = r.LinkUrl,
-                    ProductDescription = r.ProductDescription,
-                    CountryId = r.CountryId,
-                    ProductType = r.ProductType,
-                    ImageSmallUrl = r.ImageSmallUrl,
-                    BrandName = r.BrandName,
-                })
-            .ToListAsync();
-
-            return resultProducts;
+            var resultProducts = await _eMagPhonesRepository.GetAllProductsAsync();
+            return _mapper.Map<List<PhoneModel>>(resultProducts);
         }
     }
 }

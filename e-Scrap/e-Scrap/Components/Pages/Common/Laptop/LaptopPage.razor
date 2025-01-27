@@ -19,15 +19,15 @@
     {
         loading = true;
         var client = HttpClientFactory.CreateClient("API");
-        LaptopProducts = await GetAltexPhoneProductsAsync(client);
-        LaptopProducts.AddRange(await GetMediaGalaxyPhoneProductsAsync(client));
-        LaptopProducts.AddRange(await GetEmagPhoneProductsAsync(client));
+        LaptopProducts = await GetAltexLaptopProductsAsync(client);
+        LaptopProducts.AddRange(await GetMediaGalaxyLaptopProductsAsync(client));
+        LaptopProducts.AddRange(await GetEmagLaptopProductsAsync(client));
         loading = false;
         StateHasChanged();
     }
 
     #region ShopsAPI
-    protected async Task<List<LaptopModel>> GetAltexPhoneProductsAsync(HttpClient client)
+    protected async Task<List<LaptopModel>> GetAltexLaptopProductsAsync(HttpClient client)
     {
         var endpoint = "api/altex/laptop";
         var products = await _getData.GetDataAsync<LaptopModel>(client, endpoint);
@@ -36,7 +36,7 @@
     }
 
 
-    protected async Task<List<LaptopModel>> GetMediaGalaxyPhoneProductsAsync(HttpClient client)
+    protected async Task<List<LaptopModel>> GetMediaGalaxyLaptopProductsAsync(HttpClient client)
     {
         var endpoint = "api/media-galaxy/laptop";
         var products = await _getData.GetDataAsync<LaptopModel>(client, endpoint);
@@ -44,7 +44,7 @@
         return products;
     }
 
-    protected async Task<List<LaptopModel>> GetEmagPhoneProductsAsync(HttpClient client)
+    protected async Task<List<LaptopModel>> GetEmagLaptopProductsAsync(HttpClient client)
     {
         var endpoint = "api/emag/laptop";
         var products = await _getData.GetDataAsync<LaptopModel>(client, endpoint);

@@ -1,37 +1,23 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using e_Scrap.Models.Common.GasCooker;
+using eScrap.Repository;
 using Models.Common.Refrigerator;
 using Services.eMag.Refrigerator;
 
 public class eMagRefrigeratorService : IEmagRefrigeratorService
 {
-    private readonly IAppSettingsDbContext _context;
+    private readonly IEMagRefrigeratorRepository _eMagRefrigeratorRepository;
+    private readonly IMapper _mapper;
 
-    public eMagRefrigeratorService(IAppSettingsDbContext context)
+    public eMagRefrigeratorService(IEMagRefrigeratorRepository eMagRefrigeratorRepository, IMapper mapper)
     {
-        _context = context;
+        _eMagRefrigeratorRepository = eMagRefrigeratorRepository;
+        _mapper = mapper;
     }
 
     public async Task<List<RefrigeratorModel>> GetRefrigeratorProducts()
     {
-        var resultProducts = await _context.eMagRefrigerator
-            .Select(r => new RefrigeratorModel
-            {
-                Id = r.Id,
-                ProductId = r.ProductId,
-                Name = r.Name,
-                StandardPrice = r.StandardPrice,
-                DiscountPrice = r.DiscountPrice,
-                DiscountPercentage = r.DiscountPercentage,
-                ShopId = r.ShopId,
-                LinkUrl = r.LinkUrl,
-                ProductDescription = r.ProductDescription,
-                CountryId = r.CountryId,
-                ProductType = r.ProductType,
-                ImageSmallUrl = r.ImageSmallUrl,
-                BrandName = r.BrandName,
-            })
-            .ToListAsync();
-
-        return resultProducts;
+        var resultProducts = await _eMagRefrigeratorRepository.GetAllProductsAsync();
+        return _mapper.Map<List<RefrigeratorModel>>(resultProducts);
     }
 }

@@ -2,6 +2,7 @@ using e_Scrap.Components;
 using e_Scrap.Components.Pages.Common;
 using e_Scrap.Mapping;
 using eScrap.Middleware;
+using eScrap.Repository;
 using eScrap.Services;
 using eScrap.Services.Altex.Laptop;
 using eScrap.Services.eMag.Laptop;
@@ -35,27 +36,12 @@ builder.Services.AddCors(options =>
     });
 });
 
+RepositoryDeclaration(builder);
+
 builder.Services.AddHttpClient();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
-builder.Services.AddHttpClient<UltraMdRefrigeratorService>();
-builder.Services.AddHttpClient<AltexRefrigeratorService>();
-builder.Services.AddScoped<IAltexRefrigeratorService, AltexRefrigeratorService>();
-builder.Services.AddScoped<IAltexGasCookerService, AltexGasCookerService>();
-builder.Services.AddScoped<IAltexWashMachineService, AltexWashMachineService>();
-builder.Services.AddScoped<IAltexPhoneService, AltexPhoneService>();
-builder.Services.AddScoped<IAltexLaptopService, AltexLaptopService>();
-builder.Services.AddScoped<IEmagGasCookerService, eMagGasCookerService>();
-builder.Services.AddScoped<IEmagRefrigeratorService, eMagRefrigeratorService>();
-builder.Services.AddScoped<IEmagWashMachineService, eMagWashMachineService>();
-builder.Services.AddScoped<IEmagPhoneService, eMagPhoneService>();
-builder.Services.AddScoped<IEmagLaptopService, eMagLaptopService>();
-builder.Services.AddScoped<IDedemanRefrigeratorService, DedemanRefrigeratorService>();
-builder.Services.AddScoped<IMediaGalaxyRefrigeratorService, MediaGalaxyRefrigeratorService>();
-builder.Services.AddScoped<IMediaGalaxyGasCookerService, MediaGalaxyGasCookerService>();
-builder.Services.AddScoped<IMediaGalaxyWashMachineService, MediaGalaxyWashMachineService>();
-builder.Services.AddScoped<IMediaGalaxyPhoneService, MediaGalaxyPhoneService>();
-builder.Services.AddScoped<IMediaGalaxyLaptopService, MediaGalaxyLaptopService>();
-builder.Services.AddScoped<IShopService, ShopsService>();
+
+ServiceDeclaration(builder);
 builder.Services.AddTransient(typeof(ProductPage<>));
 
 // Add services to the container
@@ -116,3 +102,59 @@ app.MapRazorComponents<App>()
     .AddAdditionalAssemblies(typeof(e_Scrap.Client._Imports).Assembly);
 
 app.Run();
+
+static void RepositoryDeclaration(WebApplicationBuilder builder)
+{
+    builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+    builder.Services.AddScoped<IAltexLaptopRepository, AltexLaptopRepository>();
+    builder.Services.AddScoped<IAltexPhonesRepository, AltexPhonesRepository>();
+    builder.Services.AddScoped<IAltexGasCookerRepository, AltexGasCookerRepository>();
+    builder.Services.AddScoped<IAltexGasCookerEmbeddedRepository, AltexGasCookerEmbeddedRepository>();
+    builder.Services.AddScoped<IAltexOvenEmbeddedRepository, AltexOvenEmbeddedRepository>();
+    builder.Services.AddScoped<IAltexHoodRepository, AltexHoodRepository>();
+    builder.Services.AddScoped<IAltexWashMachineRepository, AltexWashMachineRepository>();
+    builder.Services.AddScoped<IAltexRefrigeratorRepository, AltexRefrigeratorRepository>();
+
+    builder.Services.AddScoped<IMediaGalaxyLaptopRepository, MediaGalaxyLaptopRepository>();
+    builder.Services.AddScoped<IMediaGalaxyPhonesRepository, MediaGalaxyPhonesRepository>();
+    builder.Services.AddScoped<IMediaGalaxyGasCookerRepository, MediaGalaxyGasCookerRepository>();
+    builder.Services.AddScoped<IMediaGalaxyGasCookerEmbeddedRepository, MediaGalaxyGasCookerEmbeddedRepository>();
+    builder.Services.AddScoped<IMediaGalaxyOvenEmbeddedRepository, MediaGalaxyOvenEmbeddedRepository>();
+    builder.Services.AddScoped<IMediaGalaxyHoodRepository, MediaGalaxyHoodRepository>();
+    builder.Services.AddScoped<IMediaGalaxyWashMachineRepository, MediaGalaxyWashMachineRepository>();
+    builder.Services.AddScoped<IMediaGalaxyRefrigeratorRepository, MediaGalaxyRefrigeratorRepository>();
+
+    builder.Services.AddScoped<IEMagLaptopRepository, eMagLaptopRepository>();
+    builder.Services.AddScoped<IEMagPhonesRepository, eMagPhonesRepository>();
+    builder.Services.AddScoped<IEMagGasCookerRepository, eMagGasCookerRepository>();
+    builder.Services.AddScoped<IEMagGasCookerEmbeddedRepository, eMagGasCookerEmbeddedRepository>();
+    builder.Services.AddScoped<IEMagOvenEmbeddedRepository, eMagOvenEmbeddedRepository>();
+    builder.Services.AddScoped<IEMagHoodRepository, eMagHoodRepository>();
+    builder.Services.AddScoped<IEMagWashMachineRepository, eMagWashMachineRepository>();
+    builder.Services.AddScoped<IEMagRefrigeratorRepository, eMagRefrigeratorRepository>();
+
+    builder.Services.AddScoped<IDedemanRefrigeratorRepository, DedemanRefrigeratorRepository>();
+}
+
+static void ServiceDeclaration(WebApplicationBuilder builder)
+{
+    builder.Services.AddHttpClient<UltraMdRefrigeratorService>();
+    builder.Services.AddHttpClient<AltexRefrigeratorService>();
+    builder.Services.AddScoped<IAltexRefrigeratorService, AltexRefrigeratorService>();
+    builder.Services.AddScoped<IAltexGasCookerService, AltexGasCookerService>();
+    builder.Services.AddScoped<IAltexWashMachineService, AltexWashMachineService>();
+    builder.Services.AddScoped<IAltexPhoneService, AltexPhoneService>();
+    builder.Services.AddScoped<IAltexLaptopService, AltexLaptopService>();
+    builder.Services.AddScoped<IEmagGasCookerService, eMagGasCookerService>();
+    builder.Services.AddScoped<IEmagRefrigeratorService, eMagRefrigeratorService>();
+    builder.Services.AddScoped<IEmagWashMachineService, eMagWashMachineService>();
+    builder.Services.AddScoped<IEmagPhoneService, eMagPhoneService>();
+    builder.Services.AddScoped<IEmagLaptopService, eMagLaptopService>();
+    builder.Services.AddScoped<IDedemanRefrigeratorService, DedemanRefrigeratorService>();
+    builder.Services.AddScoped<IMediaGalaxyRefrigeratorService, MediaGalaxyRefrigeratorService>();
+    builder.Services.AddScoped<IMediaGalaxyGasCookerService, MediaGalaxyGasCookerService>();
+    builder.Services.AddScoped<IMediaGalaxyWashMachineService, MediaGalaxyWashMachineService>();
+    builder.Services.AddScoped<IMediaGalaxyPhoneService, MediaGalaxyPhoneService>();
+    builder.Services.AddScoped<IMediaGalaxyLaptopService, MediaGalaxyLaptopService>();
+    builder.Services.AddScoped<IShopService, ShopsService>();
+}

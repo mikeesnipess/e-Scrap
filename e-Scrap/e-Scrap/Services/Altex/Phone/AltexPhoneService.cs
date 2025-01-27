@@ -1,37 +1,23 @@
-﻿using e_Scrap.Models.Common.Phone;
-using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using e_Scrap.Models.Common.Phone;
+using eScrap.Repository;
 using Services.Altex.Phone;
 
 public class AltexPhoneService : IAltexPhoneService
 {
-    private readonly IAppSettingsDbContext _context;
+    private readonly IAltexPhonesRepository _phonesRepository;
+    private readonly IMapper _mapper;
 
-    public AltexPhoneService(IAppSettingsDbContext context)
+    public AltexPhoneService(IAltexPhonesRepository phonesRepository, IMapper mapper)
     {
-        _context = context;
+        _phonesRepository = phonesRepository;
+        _mapper = mapper;
     }
 
     public async Task<List<PhoneModel>> GetPhoneListAsync()
     {
-        var resultProducts = await _context.AltexPhones
-            .Select(r => new PhoneModel
-            {
-                Id = r.Id,
-                Name = r.Name,
-                StandardPrice = r.StandardPrice,
-                DiscountPrice = r.DiscountPrice,
-                DiscountPercentage = r.DiscountPercentage,
-                ShopId = r.ShopId,
-                LinkUrl = r.LinkUrl,
-                ProductDescription = r.ProductDescription,
-                CountryId = r.CountryId,
-                ProductType = r.ProductType,
-                ImageSmallUrl = r.ImageSmallUrl,
-                BrandName = r.BrandName,
-            })
-            .ToListAsync();
-
-        return resultProducts;
+        var resultProducts = await _phonesRepository.GetAllProductsAsync();
+        return _mapper.Map<List<PhoneModel>>(resultProducts);
     }
 }
 

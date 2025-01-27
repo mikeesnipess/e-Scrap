@@ -1,38 +1,24 @@
-﻿using eScrap.Models.Common.Laptop;
-using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using eScrap.Models.Common.Laptop;
+using eScrap.Repository;
 
 namespace eScrap.Services.MediaGalaxy.Laptop
 {
     public class MediaGalaxyLaptopService : IMediaGalaxyLaptopService
     {
-        private readonly IAppSettingsDbContext _context;
+        private readonly IMediaGalaxyLaptopRepository _mediaGalaxyLaptopRepository;
+        private readonly IMapper _mapper;
 
-        public MediaGalaxyLaptopService(IAppSettingsDbContext context)
+        public MediaGalaxyLaptopService(IMediaGalaxyLaptopRepository mediaGalaxyLaptopRepository, IMapper mapper)
         {
-            _context = context;
+            _mediaGalaxyLaptopRepository = mediaGalaxyLaptopRepository;
+            _mapper = mapper;
         }
 
         public async Task<List<LaptopModel>> GetProductListAsync()
         {
-            var resultProducts = await _context.MediaGalaxyLaptop
-                            .Select(r => new LaptopModel
-                            {
-                                Id = r.Id,
-                                Name = r.Name,
-                                StandardPrice = r.StandardPrice,
-                                DiscountPrice = r.DiscountPrice,
-                                DiscountPercentage = r.DiscountPercentage,
-                                ShopId = r.ShopId,
-                                LinkUrl = r.LinkUrl,
-                                ProductDescription = r.ProductDescription,
-                                CountryId = r.CountryId,
-                                ProductType = r.ProductType,
-                                ImageSmallUrl = r.ImageSmallUrl,
-                                BrandName = r.BrandName,
-                            })
-                    .ToListAsync();
-
-            return resultProducts;
+            var resultProducts = await _mediaGalaxyLaptopRepository.GetAllProductsAsync();
+            return _mapper.Map<List<LaptopModel>>(resultProducts);
         }
     }
 }
